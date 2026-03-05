@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pakistan Income Tax Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --emerald: #00b383;
+    --emerald-dark: #007a5a;
+    --emerald-glow: rgba(0,179,131,0.15);
+    --gold: #c9a84c;
+    --cream: #f5f0e8;
+    --ink: #0f1c14;
+    --ink-mid: #1e3028;
+    --ink-light: #2d4a3b;
+    --muted: #5a7a6a;
+    --border: rgba(0,179,131,0.2);
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--ink);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,179,131,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(201,168,76,0.05) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,179,131,0.015) 40px, rgba(0,179,131,0.015) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,179,131,0.015) 60px, rgba(0,179,131,0.015) 61px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .flag-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .crescent {
+    font-size: 26px;
+    filter: drop-shadow(0 0 8px var(--emerald));
+    animation: pulse 3s ease infinite;
+  }
+
+  .flag-line {
+    height: 2px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--emerald) 60%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Card */
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: rgba(0,179,131,0.35); }
+
+  .card-label {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--emerald);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Input group */
+  .input-group {
+    position: relative;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .currency-badge {
+    position: absolute;
+    left: 18px;
+    font-size: 0.85rem;
+    color: var(--emerald);
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 18px 18px 18px 56px;
+    background: rgba(0,179,131,0.04);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--cream);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    outline: none;
+    transition: all 0.3s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--emerald);
+    background: rgba(0,179,131,0.08);
+    box-shadow: 0 0 0 4px rgba(0,179,131,0.1), inset 0 0 20px rgba(0,179,131,0.03);
+  }
+
+  input[type="number"]::placeholder { color: rgba(90,122,106,0.5); }
+
+  .period-toggle {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .period-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .period-btn.active,
+  .period-btn:hover {
+    background: var(--emerald-glow);
+    border-color: var(--emerald);
+    color: var(--emerald);
+  }
+
+  /* Calculate button */
+  .calc-btn {
+    width: 100%;
+    padding: 20px;
+    margin-top: 28px;
+    background: linear-gradient(135deg, var(--emerald-dark), var(--emerald));
+    border: none;
+    border-radius: 12px;
+    color: var(--ink);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,179,131,0.35); }
+  .calc-btn:hover::before { opacity: 1; }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* Results */
+  .results {
+    animation: slideUp 0.5s ease both;
+    display: none;
+  }
+
+  .results.visible { display: block; }
+
+  /* Breakdown flow */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-step {
+    position: relative;
+    padding: 22px 24px;
+    border-left: 2px solid var(--border);
+    margin-left: 20px;
+    transition: all 0.3s;
+  }
+
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 28px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ink-mid);
+    border: 2px solid var(--muted);
+    transition: all 0.3s;
+  }
+
+  .flow-step.highlight::before {
+    background: var(--emerald);
+    border-color: var(--emerald);
+    box-shadow: 0 0 12px var(--emerald);
+  }
+
+  .flow-step.highlight { border-left-color: var(--emerald); }
+
+  .flow-step.deduct { border-left-color: rgba(201,168,76,0.4); }
+  .flow-step.deduct::before { background: var(--gold); border-color: var(--gold); }
+
+  .step-label {
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .step-value {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+
+  .step-value .rs { font-size: 0.9rem; color: var(--muted); margin-right: 4px; }
+
+  .step-note {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .step-value.negative { color: #ff7a6b; }
+  .step-value.tax-color { color: var(--gold); }
+
+  /* Final result */
+  .final-card {
+    background: linear-gradient(135deg, rgba(0,179,131,0.1), rgba(0,122,90,0.05));
+    border: 1.5px solid rgba(0,179,131,0.4);
+    border-radius: 16px;
+    padding: 36px;
+    margin-top: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-card::before {
+    content: '☽';
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    font-size: 120px;
+    opacity: 0.04;
+    line-height: 1;
+  }
+
+  .final-label {
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--emerald);
+    margin-bottom: 12px;
+  }
+
+  .final-value {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -1px;
+  }
+
+  .final-value .rs-lg { font-size: 0.5em; color: var(--emerald); vertical-align: top; margin-top: 10px; margin-right: 4px; }
+
+  .final-monthly {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* Tax slab info */
+  .slab-badge {
+    display: inline-block;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 14px;
+  }
+
+  /* Summary grid */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 500px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+
+  .summary-tile {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .tile-label {
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .tile-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--cream);
+  }
+
+  .tile-value.green { color: var(--emerald); }
+  .tile-value.amber { color: var(--gold); }
+  .tile-value.red { color: #ff7a6b; }
+
+  /* Tax slabs table */
+  .slabs-card {
+    margin-top: 8px;
+  }
+
+  .slab-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.72rem;
+    transition: all 0.2s;
+  }
+
+  .slab-row:last-child { border-bottom: none; }
+  .slab-row.active-slab { background: var(--emerald-glow); border-radius: 8px; padding: 12px 10px; margin: 0 -10px; }
+
+  .slab-range { color: var(--muted); }
+  .slab-rate { color: var(--gold); font-weight: 500; }
+  .slab-row.active-slab .slab-range { color: var(--cream); }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 6px var(--emerald)); }
+    50% { filter: drop-shadow(0 0 16px var(--emerald)); }
+  }
+
+  @keyframes countUp {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .animate-in {
+    animation: countUp 0.4s ease both;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.62rem;
+    color: rgba(90,122,106,0.5);
+    letter-spacing: 1.5px;
+    margin-top: 40px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="flag-strip">
+      <div class="flag-line"></div>
+      <span class="crescent">☽★</span>
+      <div class="flag-line"></div>
+    </div>
+    <h1>Pakistan Tax<br>Calculator</h1>
+    <p class="subtitle">FY 2025–26 · Salaried Individuals</p>
+  </header>
+
+  <!-- Input Card -->
+  <div class="card" style="animation: fadeDown 0.8s ease 0.15s both; opacity: 0;">
+    <div class="card-label">Enter Your Income</div>
+
+    <div class="input-group">
+      <label>Gross Salary Amount</label>
+      <div class="input-wrapper">
+        <span class="currency-badge">Rs.</span>
+        <input type="number" id="salaryInput" placeholder="0" min="0" oninput="onInputChange()">
+      </div>
+    </div>
+
+    <div class="period-toggle">
+      <button class="period-btn active" id="btn-monthly" onclick="setPeriod('monthly')">Monthly</button>
+      <button class="period-btn" id="btn-annual" onclick="setPeriod('annual')">Annual</button>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate Tax →</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <div class="card">
+      <div class="card-label">Calculation Breakdown</div>
+      <div class="flow">
+
+        <div class="flow-step highlight">
+          <div class="step-label">Gross Salary (Monthly)</div>
+          <div class="step-value animate-in" id="r-gross"><span class="rs">Rs.</span><span id="v-gross">–</span></div>
+          <div class="step-note">Your monthly gross salary input</div>
+        </div>
+
+        <div class="flow-step deduct">
+          <div class="step-label">Medical Allowance (10%) — Monthly</div>
+          <div class="step-value negative animate-in" id="r-medical">− <span class="rs">Rs.</span><span id="v-medical">–</span></div>
+          <div class="step-note">Set aside before tax computation</div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-label">Taxable Income (Monthly)</div>
+          <div class="step-value animate-in" id="r-taxable"><span class="rs">Rs.</span><span id="v-taxable">–</span></div>
+          <div class="step-note">Gross minus medical allowance</div>
+        </div>
+
+        <div class="flow-step deduct">
+          <div class="step-label">Income Tax — Monthly Deduction</div>
+          <div class="step-value tax-color animate-in"><span class="rs">Rs.</span><span id="v-tax">–</span></div>
+          <div class="step-note" id="v-slab-note">–</div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-label">After-Tax Income (Monthly)</div>
+          <div class="step-value animate-in"><span class="rs">Rs.</span><span id="v-after-tax">–</span></div>
+          <div class="step-note">Taxable income minus tax</div>
+        </div>
+
+        <div class="flow-step highlight">
+          <div class="step-label">+ Medical Allowance Added Back</div>
+          <div class="step-value animate-in"><span class="rs" style="color:var(--emerald)">+ Rs.</span><span id="v-medical-back">–</span></div>
+          <div class="step-note">Medical re-added to net take-home</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Final Take-Home -->
+    <div class="final-card">
+      <div class="final-label">Monthly Net Take-Home</div>
+      <div class="final-value animate-in"><span class="rs-lg">Rs.</span><span id="v-final">–</span></div>
+      <div class="final-monthly" id="v-final-monthly">— per month</div>
+      <div class="slab-badge" id="v-slab-badge">Tax Slab: –</div>
+    </div>
+
+    <!-- Summary Tiles -->
+    <div class="summary-grid">
+      <div class="summary-tile">
+        <div class="tile-label">Effective Rate</div>
+        <div class="tile-value amber" id="t-effective">–</div>
+      </div>
+      <div class="summary-tile">
+        <div class="tile-label">Total Tax</div>
+        <div class="tile-value red" id="t-total-tax">–</div>
+      </div>
+      <div class="summary-tile">
+        <div class="tile-label">Medical Benefit</div>
+        <div class="tile-value green" id="t-medical">–</div>
+      </div>
+    </div>
+
+    <!-- Tax Slabs Reference -->
+    <div class="card slabs-card" style="margin-top: 24px;">
+      <div class="card-label">FY 2025–26 Tax Slabs</div>
+      <div id="slabs-list"></div>
+    </div>
+
+  </div>
+
+  <p class="footer-note">Based on FBR Pakistan FY 2025-26 Salaried Tax Slabs · For reference only</p>
+
+</div>
+
+<script>
+  // FBR FY 2025-26 Salaried Tax Slabs (Annual Income)
+  const TAX_SLABS = [
+    { min: 0,        max: 600000,   fixed: 0,      rate: 0,    label: "Up to Rs. 600,000" },
+    { min: 600001,   max: 1200000,  fixed: 0,      rate: 0.01, label: "Rs. 600,001 - 1,200,000" },
+    { min: 1200001,  max: 2200000,  fixed: 6000,   rate: 0.11, label: "Rs. 1,200,001 - 2,200,000" },
+    { min: 2200001,  max: 3200000,  fixed: 116000, rate: 0.23, label: "Rs. 2,200,001 - 3,200,000" },
+    { min: 3200001,  max: 4100000,  fixed: 346000, rate: 0.30, label: "Rs. 3,200,001 - 4,100,000" },
+    { min: 4100001,  max: Infinity, fixed: 616000, rate: 0.35, label: "Above Rs. 4,100,000" },
+  ];
+
+  let period = 'monthly';
+
+  function setPeriod(p) {
+    period = p;
+    document.getElementById('btn-monthly').classList.toggle('active', p === 'monthly');
+    document.getElementById('btn-annual').classList.toggle('active', p === 'annual');
+    const r = document.getElementById('results');
+    if (r.classList.contains('visible')) r.classList.remove('visible');
+  }
+
+  function onInputChange() {
+    const r = document.getElementById('results');
+    if (r.classList.contains('visible')) r.classList.remove('visible');
+  }
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('en-PK');
+  }
+
+  function computeTax(annualTaxable) {
+    for (let i = 0; i < TAX_SLABS.length; i++) {
+      const s = TAX_SLABS[i];
+      if (annualTaxable <= s.max) {
+        const annualTax = s.fixed + Math.max(0, annualTaxable - s.min) * s.rate;
+        return { annualTax: Math.max(0, annualTax), slabIndex: i, slab: s };
+      }
+    }
+    const last = TAX_SLABS[TAX_SLABS.length - 1];
+    return { annualTax: last.fixed + (annualTaxable - last.min) * last.rate, slabIndex: TAX_SLABS.length - 1, slab: last };
+  }
+
+  function calculate() {
+    const raw = parseFloat(document.getElementById('salaryInput').value);
+    if (!raw || raw <= 0) {
+      document.getElementById('salaryInput').focus();
+      document.getElementById('salaryInput').style.borderColor = '#ff7a6b';
+      setTimeout(() => document.getElementById('salaryInput').style.borderColor = '', 1000);
+      return;
+    }
+
+    // Convert to monthly and annual
+    const monthlyGross = period === 'monthly' ? raw : raw / 12;
+    const annualGross  = monthlyGross * 12;
+
+    // Medical allowance: 10% of gross
+    const monthlyMedical = monthlyGross * 0.10;
+    const annualMedical  = monthlyMedical * 12;
+
+    // Taxable income (annual, for slab lookup)
+    const annualTaxable  = annualGross - annualMedical;
+
+    const { annualTax, slabIndex, slab } = computeTax(annualTaxable);
+    const monthlyTax = annualTax / 12;
+
+    // Monthly figures
+    const monthlyTaxableIncome = annualTaxable / 12;
+    const monthlyAfterTax      = monthlyTaxableIncome - monthlyTax;
+    const monthlyTakeHome      = monthlyAfterTax + monthlyMedical;
+    const annualTakeHome       = monthlyTakeHome * 12;
+    const effectiveRate        = annualGross > 0 ? (annualTax / annualGross * 100) : 0;
+
+    // Fill breakdown (all monthly values)
+    document.getElementById('v-gross').textContent        = fmt(monthlyGross);
+    document.getElementById('v-medical').textContent      = fmt(monthlyMedical);
+    document.getElementById('v-taxable').textContent      = fmt(monthlyTaxableIncome);
+    document.getElementById('v-tax').textContent          = fmt(monthlyTax);
+    document.getElementById('v-slab-note').textContent    = 'Annual taxable: Rs. ' + fmt(annualTaxable) + ' | Slab ' + (slabIndex+1) + ': ' + (slab.rate*100) + '% rate applies';
+    document.getElementById('v-after-tax').textContent    = fmt(monthlyAfterTax);
+    document.getElementById('v-medical-back').textContent = fmt(monthlyMedical);
+
+    // Final card headline: monthly take-home
+    document.getElementById('v-final').textContent         = fmt(monthlyTakeHome);
+    document.getElementById('v-final-monthly').textContent = 'Rs. ' + fmt(annualTakeHome) + ' annually';
+    document.getElementById('v-slab-badge').textContent    = 'Tax Slab ' + (slabIndex+1) + ' | ' + (slab.rate*100) + '% Rate';
+
+    // Summary tiles
+    document.getElementById('t-effective').textContent = effectiveRate.toFixed(2) + '%';
+    document.getElementById('t-total-tax').textContent  = 'Rs. ' + fmt(monthlyTax) + '/mo';
+    document.getElementById('t-medical').textContent    = 'Rs. ' + fmt(monthlyMedical) + '/mo';
+
+    // Render slabs table
+    const slabsHtml = TAX_SLABS.map((s, i) => {
+      const rateLabel = s.rate === 0 ? 'Nil' : (s.rate * 100) + '%';
+      const youLabel  = i === slabIndex ? ' ← you' : '';
+      return '<div class="slab-row ' + (i === slabIndex ? 'active-slab' : '') + '">' +
+        '<span class="slab-range">' + s.label + '</span>' +
+        '<span class="slab-rate">' + rateLabel + youLabel + '</span>' +
+        '</div>';
+    }).join('');
+    document.getElementById('slabs-list').innerHTML = slabsHtml;
+
+    const results = document.getElementById('results');
+    results.classList.add('visible');
+    results.style.animation = 'none';
+    results.offsetHeight;
+    results.style.animation = 'slideUp 0.5s ease both';
+    setTimeout(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') calculate();
+  });
+</script>
+
+</body>
+</html>
