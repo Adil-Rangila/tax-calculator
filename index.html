@@ -754,14 +754,32 @@ function calculate() {
   const annualMedDed = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
   const annualOtherDed = monthOtherDed.reduce((a, b) => a + b, 0);
 
-  const annualTax = computeTax(annualTaxable, selectedFY);
-  const avgMonthlyTax = annualTax / 12;
-
+  // Progressive Payroll Simulation (Month-by-Month)
   let monthTaxes = [];
+  let ytdTax = 0;
+  let ytdTaxable = 0;
+
   for (let i = 0; i < 12; i++) {
-    const share = annualTaxable > 0 ? monthTaxable[i] / annualTaxable : 1 / 12;
-    monthTaxes.push(Math.round(annualTax * share));
+    let currentMonthTaxable = monthTaxable[i];
+
+    // Project annual taxable income assuming the current month's setup remains until June
+    let projectedAnnualTaxable = ytdTaxable + (currentMonthTaxable * (12 - i));
+
+    // Calculate FBR tax on the projected annual income
+    let projectedAnnualTax = computeTax(projectedAnnualTaxable, selectedFY);
+
+    // Determine the tax to deduct this month by spreading the remaining tax over remaining months
+    let remainingTax = projectedAnnualTax - ytdTax;
+    let currentMonthTax = Math.max(0, Math.round(remainingTax / (12 - i)));
+
+    monthTaxes.push(currentMonthTax);
+    ytdTax += currentMonthTax;
+    ytdTaxable += currentMonthTaxable;
   }
+
+  // Set the true annual tax to the exact amount deducted through the simulation
+  const annualTax = ytdTax; 
+  const avgMonthlyTax = annualTax / 12;
 
   const annualNetPay = annualGross - annualTax;
   const effRate = annualGross > 0 ? (annualTax / annualGross * 100) : 0;
