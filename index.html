@@ -3,707 +3,916 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pakistan Income Tax Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Pakistan Salary Tax Calculator — FY 2025-26</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --emerald: #00b383;
-    --emerald-dark: #007a5a;
-    --emerald-glow: rgba(0,179,131,0.15);
-    --gold: #c9a84c;
-    --cream: #f5f0e8;
-    --ink: #0f1c14;
-    --ink-mid: #1e3028;
-    --ink-light: #2d4a3b;
-    --muted: #5a7a6a;
-    --border: rgba(0,179,131,0.2);
+    --emerald: #0d5c4a;
+    --emerald-light: #1a7a63;
+    --emerald-pale: #e8f5f0;
+    --gold: #c9962a;
+    --gold-light: #f0c96b;
+    --cream: #faf7f2;
+    --ink: #1a1a1a;
+    --ink-mid: #3d3d3d;
+    --ink-soft: #7a7a7a;
+    --border: #d6cfc4;
     --white: #ffffff;
+    --red: #c0392b;
+    --red-pale: #fdf0ee;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'IBM Plex Mono', monospace;
-    background: var(--ink);
-    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
     min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
   }
 
-  /* Background texture */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,179,131,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(201,168,76,0.05) 0%, transparent 60%),
-      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,179,131,0.015) 40px, rgba(0,179,131,0.015) 41px),
-      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,179,131,0.015) 60px, rgba(0,179,131,0.015) 61px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
-  }
-
-  /* Header */
+  /* HEADER */
   header {
-    text-align: center;
-    margin-bottom: 50px;
-    animation: fadeDown 0.8s ease both;
-  }
-
-  .flag-strip {
+    background: var(--emerald);
+    padding: 28px 40px 24px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--gold);
   }
-
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
   .crescent {
-    font-size: 26px;
-    filter: drop-shadow(0 0 8px var(--emerald));
-    animation: pulse 3s ease infinite;
+    font-size: 32px;
+    line-height: 1;
   }
-
-  .flag-line {
-    height: 2px;
-    width: 60px;
-    background: linear-gradient(90deg, transparent, var(--emerald), transparent);
-  }
-
-  h1 {
+  .brand-text h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--cream) 0%, var(--emerald) 60%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.02em;
   }
-
-  .subtitle {
-    margin-top: 10px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 3px;
+  .brand-text p {
+    font-size: 12px;
+    color: var(--gold-light);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    margin-top: 2px;
   }
-
-  /* Card */
-  .card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-    margin-bottom: 24px;
-    backdrop-filter: blur(10px);
-    transition: border-color 0.3s;
-  }
-
-  .card:hover { border-color: rgba(0,179,131,0.35); }
-
-  .card-label {
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+  .fy-badge {
+    background: var(--gold);
     color: var(--emerald);
-    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* LAYOUT */
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 24px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--emerald);
+    padding: 16px 22px;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
-  .card-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+  .card-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+  .card-header .icon {
+    font-size: 18px;
+  }
+  .card-body {
+    padding: 24px 22px;
   }
 
-  /* Input group */
-  .input-group {
-    position: relative;
+  /* FORM */
+  .form-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border);
   }
-
-  .input-group label {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 2px;
+  .form-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
     text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .currency-badge {
-    position: absolute;
-    left: 18px;
-    font-size: 0.85rem;
-    color: var(--emerald);
+    letter-spacing: 0.12em;
+    color: var(--gold);
     font-weight: 500;
-    pointer-events: none;
-    z-index: 2;
+    margin-bottom: 12px;
   }
-
-  input[type="number"] {
+  .field {
+    margin-bottom: 14px;
+  }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 5px;
+  }
+  .field-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 3px;
+  }
+  input[type="number"], select {
     width: 100%;
-    padding: 18px 18px 18px 56px;
-    background: rgba(0,179,131,0.04);
+    padding: 10px 14px;
     border: 1.5px solid var(--border);
-    border-radius: 10px;
-    color: var(--cream);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 1.4rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    outline: none;
-    transition: all 0.3s;
+    border-radius: 7px;
+    font-size: 15px;
+    font-family: 'DM Mono', monospace;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color 0.2s;
     -moz-appearance: textfield;
   }
-
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--emerald-light);
+    background: var(--white);
+  }
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  input[type="number"]:focus {
-    border-color: var(--emerald);
-    background: rgba(0,179,131,0.08);
-    box-shadow: 0 0 0 4px rgba(0,179,131,0.1), inset 0 0 20px rgba(0,179,131,0.03);
-  }
-
-  input[type="number"]::placeholder { color: rgba(90,122,106,0.5); }
-
-  .period-toggle {
+  .toggle-row {
     display: flex;
-    gap: 10px;
-    margin-top: 14px;
-  }
-
-  .period-btn {
-    flex: 1;
-    padding: 10px;
-    background: transparent;
-    border: 1px solid var(--border);
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--emerald-pale);
     border-radius: 8px;
-    color: var(--muted);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s;
   }
-
-  .period-btn.active,
-  .period-btn:hover {
-    background: var(--emerald-glow);
-    border-color: var(--emerald);
+  .toggle-row:hover { border-color: var(--emerald-light); }
+  .toggle-row label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
     color: var(--emerald);
   }
-
-  /* Calculate button */
-  .calc-btn {
-    width: 100%;
-    padding: 20px;
-    margin-top: 28px;
-    background: linear-gradient(135deg, var(--emerald-dark), var(--emerald));
-    border: none;
-    border-radius: 12px;
-    color: var(--ink);
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
+  .toggle-row .toggle-desc {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 2px;
   }
-
-  .calc-btn::before {
-    content: '';
+  .switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
+    background: #ccc;
+    border-radius: 24px;
+    transition: 0.3s;
+    cursor: pointer;
   }
-
-  .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,179,131,0.35); }
-  .calc-btn:hover::before { opacity: 1; }
-  .calc-btn:active { transform: translateY(0); }
-
-  /* Results */
-  .results {
-    animation: slideUp 0.5s ease both;
-    display: none;
-  }
-
-  .results.visible { display: block; }
-
-  /* Breakdown flow */
-  .flow {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .flow-step {
-    position: relative;
-    padding: 22px 24px;
-    border-left: 2px solid var(--border);
-    margin-left: 20px;
-    transition: all 0.3s;
-  }
-
-  .flow-step::before {
+  .slider::before {
     content: '';
     position: absolute;
-    left: -7px;
-    top: 28px;
-    width: 12px;
-    height: 12px;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
     border-radius: 50%;
-    background: var(--ink-mid);
-    border: 2px solid var(--muted);
-    transition: all 0.3s;
+    transition: 0.3s;
   }
+  .switch input:checked + .slider { background: var(--emerald); }
+  .switch input:checked + .slider::before { transform: translateX(18px); }
 
-  .flow-step.highlight::before {
-    background: var(--emerald);
-    border-color: var(--emerald);
-    box-shadow: 0 0 12px var(--emerald);
-  }
-
-  .flow-step.highlight { border-left-color: var(--emerald); }
-
-  .flow-step.deduct { border-left-color: rgba(201,168,76,0.4); }
-  .flow-step.deduct::before { background: var(--gold); border-color: var(--gold); }
-
-  .step-label {
-    font-size: 0.62rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .step-value {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: var(--cream);
-    letter-spacing: -0.5px;
-  }
-
-  .step-value .rs { font-size: 0.9rem; color: var(--muted); margin-right: 4px; }
-
-  .step-note {
-    font-size: 0.65rem;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  .step-value.negative { color: #ff7a6b; }
-  .step-value.tax-color { color: var(--gold); }
-
-  /* Final result */
-  .final-card {
-    background: linear-gradient(135deg, rgba(0,179,131,0.1), rgba(0,122,90,0.05));
-    border: 1.5px solid rgba(0,179,131,0.4);
-    border-radius: 16px;
-    padding: 36px;
-    margin-top: 24px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .final-card::before {
-    content: '☽';
-    position: absolute;
-    top: -20px;
-    right: 20px;
-    font-size: 120px;
-    opacity: 0.04;
-    line-height: 1;
-  }
-
-  .final-label {
-    font-size: 0.65rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--emerald);
-    margin-bottom: 12px;
-  }
-
-  .final-value {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 900;
-    color: var(--white);
-    letter-spacing: -1px;
-  }
-
-  .final-value .rs-lg { font-size: 0.5em; color: var(--emerald); vertical-align: top; margin-top: 10px; margin-right: 4px; }
-
-  .final-monthly {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 8px;
-  }
-
-  /* Tax slab info */
-  .slab-badge {
-    display: inline-block;
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  .increment-fields {
+    display: none;
     margin-top: 14px;
+    padding: 16px;
+    background: var(--cream);
+    border-radius: 8px;
+    border: 1px dashed var(--border);
+  }
+  .increment-fields.visible { display: block; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
-  /* Summary grid */
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--emerald);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .calc-btn:hover { background: var(--emerald-light); }
+  .calc-btn:active { transform: scale(0.99); }
+
+  /* RESULTS */
+  .results-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .results-placeholder .big-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .results-placeholder p { font-size: 14px; }
+
+  .result-section { display: none; }
+  .result-section.visible { display: block; }
+
   .summary-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  .stat-box.primary {
+    background: var(--emerald);
+    border-color: var(--emerald);
+    color: white;
+  }
+  .stat-box.gold {
+    background: linear-gradient(135deg, #7a5c1e, #c9962a);
+    border-color: var(--gold);
+    color: white;
+  }
+  .stat-box.light { background: var(--emerald-pale); }
+  .stat-box.warn { background: var(--red-pale); border-color: #f5c6c1; }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.75;
+    margin-bottom: 4px;
+  }
+  .stat-box.primary .stat-label, .stat-box.gold .stat-label { color: rgba(255,255,255,0.8); }
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .stat-box.primary .stat-value, .stat-box.gold .stat-value { color: white; }
+  .stat-box.light .stat-value { color: var(--emerald); }
+  .stat-box.warn .stat-value { color: var(--red); }
+  .stat-sub {
+    font-size: 11px;
+    margin-top: 3px;
+    opacity: 0.7;
   }
 
-  @media (max-width: 500px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+  /* BREAKDOWN TABLE */
+  .breakdown-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin: 18px 0 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--ink);
+    color: white;
+    padding: 8px 10px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  th:last-child { text-align: right; }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  td:last-child { text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) td { background: var(--cream); }
+  tfoot tr td { border-top: 2px solid var(--gold); font-size: 12px; }
 
-  .summary-tile {
-    background: rgba(255,255,255,0.02);
+  .slab-ref {
+    margin-top: 28px;
+    grid-column: 1 / -1;
+  }
+  .slab-ref .card-header { background: var(--ink); }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 12px 20px;
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
+    border-radius: 8px;
+  }
+  .disclaimer strong { color: var(--gold); }
+
+  /* FY SELECTOR */
+  .fy-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .fy-btn {
+    flex: 1;
+    padding: 9px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: var(--cream);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    color: var(--ink-mid);
+    transition: all 0.2s;
     text-align: center;
   }
-
-  .tile-label {
-    font-size: 0.58rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-
-  .tile-value {
-    font-size: 0.95rem;
+  .fy-btn.active {
+    border-color: var(--emerald);
+    background: var(--emerald);
+    color: white;
     font-weight: 500;
-    color: var(--cream);
   }
 
-  .tile-value.green { color: var(--emerald); }
-  .tile-value.amber { color: var(--gold); }
-  .tile-value.red { color: #ff7a6b; }
-
-  /* Tax slabs table */
-  .slabs-card {
-    margin-top: 8px;
+  /* EFFECTIVE RATE BAR */
+  .rate-bar-wrap {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--cream);
+    border-radius: 8px;
+    border: 1px solid var(--border);
   }
-
-  .slab-row {
+  .rate-bar-label {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 0.72rem;
-    transition: all 0.2s;
+    font-size: 12px;
+    color: var(--ink-mid);
+    margin-bottom: 8px;
+  }
+  .rate-bar-label span:last-child {
+    font-family: 'DM Mono', monospace;
+    color: var(--emerald);
+    font-weight: 600;
+  }
+  .rate-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .rate-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--emerald), var(--gold));
+    border-radius: 4px;
+    transition: width 0.6s ease;
   }
 
-  .slab-row:last-child { border-bottom: none; }
-  .slab-row.active-slab { background: var(--emerald-glow); border-radius: 8px; padding: 12px 10px; margin: 0 -10px; }
-
-  .slab-range { color: var(--muted); }
-  .slab-rate { color: var(--gold); font-weight: 500; }
-  .slab-row.active-slab .slab-range { color: var(--cream); }
-
-  /* Animations */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 6px var(--emerald)); }
-    50% { filter: drop-shadow(0 0 16px var(--emerald)); }
-  }
-
-  @keyframes countUp {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .animate-in {
-    animation: countUp 0.4s ease both;
-  }
-
-  .footer-note {
-    text-align: center;
-    font-size: 0.62rem;
-    color: rgba(90,122,106,0.5);
-    letter-spacing: 1.5px;
-    margin-top: 40px;
-    text-transform: uppercase;
+  @media (max-width: 768px) {
+    header { padding: 18px 16px; }
+    .app { grid-template-columns: 1fr; padding: 20px 14px 40px; gap: 20px; }
+    .slab-ref { grid-column: 1; }
+    .disclaimer { grid-column: 1; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <header>
-    <div class="flag-strip">
-      <div class="flag-line"></div>
-      <span class="crescent">☽★</span>
-      <div class="flag-line"></div>
+<header>
+  <div class="header-brand">
+    <div class="crescent">☪</div>
+    <div class="brand-text">
+      <h1>Pakistan Tax Calculator</h1>
+      <p>Federal Board of Revenue · Salaried Individuals</p>
     </div>
-    <h1>Pakistan Tax<br>Calculator</h1>
-    <p class="subtitle">FY 2025–26 · Salaried Individuals</p>
-  </header>
+  </div>
+  <div class="fy-badge">FY 2025–26</div>
+</header>
 
-  <!-- Input Card -->
-  <div class="card" style="animation: fadeDown 0.8s ease 0.15s both; opacity: 0;">
-    <div class="card-label">Enter Your Income</div>
+<div class="app">
+  <!-- INPUT CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">✏️</span>
+      <h2>Salary Information</h2>
+    </div>
+    <div class="card-body">
 
-    <div class="input-group">
-      <label>Gross Salary Amount</label>
-      <div class="input-wrapper">
-        <span class="currency-badge">Rs.</span>
-        <input type="number" id="salaryInput" placeholder="0" min="0" oninput="onInputChange()">
+      <!-- FY SELECTOR -->
+      <div class="form-section">
+        <div class="section-label">Tax Year</div>
+        <div class="fy-selector">
+          <div class="fy-btn active" onclick="setFY('2526', this)">FY 2025–26</div>
+          <div class="fy-btn" onclick="setFY('2425', this)">FY 2024–25</div>
+          <div class="fy-btn" onclick="setFY('2324', this)">FY 2023–24</div>
+        </div>
       </div>
-    </div>
 
-    <div class="period-toggle">
-      <button class="period-btn active" id="btn-monthly" onclick="setPeriod('monthly')">Monthly</button>
-    </div>
+      <!-- SALARY TYPE -->
+      <div class="form-section">
+        <div class="section-label">Salary Mode</div>
+        <div class="field">
+          <label for="salaryType">How would you like to enter salary?</label>
+          <select id="salaryType" onchange="toggleSalaryMode()">
+            <option value="fixed">Single Fixed Monthly Salary</option>
+            <option value="increment">Salary with Mid-Year Increment</option>
+          </select>
+        </div>
+      </div>
 
-    <button class="calc-btn" onclick="calculate()">Calculate Tax →</button>
+      <!-- SALARY INPUT -->
+      <div class="form-section">
+        <div class="section-label">Gross Salary (PKR)</div>
+        <div id="fixedMode">
+          <div class="field">
+            <label for="grossSalary">Monthly Gross Salary</label>
+            <input type="number" id="grossSalary" placeholder="e.g. 150000" min="0">
+            <div class="field-hint">Enter your full monthly salary before any deductions</div>
+          </div>
+        </div>
+
+        <div id="incrementMode" style="display:none;">
+          <div class="two-col">
+            <div class="field">
+              <label for="oldSalary">Old Monthly Salary (Jul–?)</label>
+              <input type="number" id="oldSalary" placeholder="e.g. 120000" min="0">
+            </div>
+            <div class="field">
+              <label for="newSalary">New Monthly Salary (After Increment)</label>
+              <input type="number" id="newSalary" placeholder="e.g. 150000" min="0">
+            </div>
+          </div>
+          <div class="field">
+            <label for="incrementMonth">Increment Effective From (Month)</label>
+            <select id="incrementMonth">
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+            </select>
+            <div class="field-hint">Fiscal year runs July to June. July always uses the old salary.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEDUCTIONS -->
+      <div class="form-section">
+        <div class="section-label">Deductions &amp; Allowances</div>
+        <div class="toggle-row" onclick="document.getElementById('medToggle').click()">
+          <div>
+            <label for="medToggle">Deduct Medical Allowance (10%)</label>
+            <div class="toggle-desc">Medical allowance up to 10% of basic salary is tax-exempt (ITO §12)</div>
+          </div>
+          <label class="switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="medToggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="field" style="margin-top:12px;">
+          <label for="otherDeductions">Other Monthly Deductions (PKR) <span style="font-weight:300;font-size:11px;">optional</span></label>
+          <input type="number" id="otherDeductions" placeholder="e.g. 5000" min="0" value="0">
+          <div class="field-hint">Provident fund (employee share), other tax-exempt allowances</div>
+        </div>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">
+        <span>⚡</span> Calculate Tax
+      </button>
+    </div>
   </div>
 
-  <!-- Results -->
-  <div class="results" id="results">
+  <!-- RESULTS CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">📊</span>
+      <h2>Tax Calculation Results</h2>
+    </div>
+    <div class="card-body">
 
-    <div class="card">
-      <div class="card-label">Calculation Breakdown</div>
-      <div class="flow">
+      <div class="results-placeholder" id="placeholder">
+        <div class="big-icon">🧮</div>
+        <p>Enter your salary details and click<br><strong>Calculate Tax</strong> to see results.</p>
+      </div>
 
-        <div class="flow-step highlight">
-          <div class="step-label">Gross Salary (Monthly)</div>
-          <div class="step-value animate-in" id="r-gross"><span class="rs">Rs.</span><span id="v-gross">–</span></div>
-          <div class="step-note">Your monthly gross salary input</div>
+      <div class="result-section" id="resultSection">
+        <!-- SUMMARY STATS -->
+        <div class="summary-grid">
+          <div class="stat-box primary">
+            <div class="stat-label">Annual Taxable Income</div>
+            <div class="stat-value" id="rAnnualTaxable">—</div>
+            <div class="stat-sub" id="rAnnualTaxableSub"></div>
+          </div>
+          <div class="stat-box gold">
+            <div class="stat-label">Total Annual Tax</div>
+            <div class="stat-value" id="rAnnualTax">—</div>
+            <div class="stat-sub" id="rAnnualTaxSub"></div>
+          </div>
+          <div class="stat-box light">
+            <div class="stat-label">Avg Monthly Tax</div>
+            <div class="stat-value" id="rMonthlyTax">—</div>
+            <div class="stat-sub">deducted at source</div>
+          </div>
+          <div class="stat-box warn">
+            <div class="stat-label">Effective Tax Rate</div>
+            <div class="stat-value" id="rEffRate">—</div>
+            <div class="stat-sub">on gross annual salary</div>
+          </div>
+          <div class="stat-box light" style="grid-column: span 2">
+            <div class="stat-label">Total Annual Gross → Net Take-Home</div>
+            <div class="stat-value" id="rNetAnnual">—</div>
+            <div class="stat-sub" id="rNetMonthlySub"></div>
+          </div>
         </div>
 
-        <div class="flow-step deduct">
-          <div class="step-label">Medical Allowance (10%) — Monthly</div>
-          <div class="step-value negative animate-in" id="r-medical">− <span class="rs">Rs.</span><span id="v-medical">–</span></div>
-          <div class="step-note">Set aside before tax computation</div>
+        <div class="rate-bar-wrap">
+          <div class="rate-bar-label">
+            <span>Effective Tax Rate</span>
+            <span id="rBarLabel">0%</span>
+          </div>
+          <div class="rate-bar">
+            <div class="rate-bar-fill" id="rBarFill" style="width:0%"></div>
+          </div>
         </div>
 
-        <div class="flow-step">
-          <div class="step-label">Taxable Income (Monthly)</div>
-          <div class="step-value animate-in" id="r-taxable"><span class="rs">Rs.</span><span id="v-taxable">–</span></div>
-          <div class="step-note">Gross minus medical allowance</div>
-        </div>
+        <!-- DEDUCTION BREAKDOWN -->
+        <div class="breakdown-title">Annual Income Breakdown</div>
+        <table id="deductionTable">
+          <thead>
+            <tr><th>Item</th><th style="text-align:right">Amount (PKR)</th></tr>
+          </thead>
+          <tbody id="deductionBody"></tbody>
+        </table>
 
-        <div class="flow-step deduct">
-          <div class="step-label">Income Tax — Monthly Deduction</div>
-          <div class="step-value tax-color animate-in"><span class="rs">Rs.</span><span id="v-tax">–</span></div>
-          <div class="step-note" id="v-slab-note">–</div>
+        <!-- MONTHLY BREAKDOWN -->
+        <div class="breakdown-title" style="margin-top:18px">Monthly Salary Calculation — Full Detail</div>
+        <div style="overflow-x:auto; border-radius:8px; border:1px solid var(--border);">
+          <table id="monthlyTable" style="min-width:620px;">
+            <thead>
+              <tr id="monthlyHead"></tr>
+            </thead>
+            <tbody id="monthlyRows"></tbody>
+            <tfoot id="monthlyFoot"></tfoot>
+          </table>
         </div>
-
-        <div class="flow-step">
-          <div class="step-label">After-Tax Income (Monthly)</div>
-          <div class="step-value animate-in"><span class="rs">Rs.</span><span id="v-after-tax">–</span></div>
-          <div class="step-note">Taxable income minus tax</div>
-        </div>
-
-        <div class="flow-step highlight">
-          <div class="step-label">+ Medical Allowance Added Back</div>
-          <div class="step-value animate-in"><span class="rs" style="color:var(--emerald)">+ Rs.</span><span id="v-medical-back">–</span></div>
-          <div class="step-note">Medical re-added to net take-home</div>
-        </div>
-
       </div>
     </div>
-
-    <!-- Final Take-Home -->
-    <div class="final-card">
-      <div class="final-label">Monthly Net Take-Home</div>
-      <div class="final-value animate-in"><span class="rs-lg">Rs.</span><span id="v-final">–</span></div>
-      <div class="final-monthly" id="v-final-monthly">— per month</div>
-      <div class="slab-badge" id="v-slab-badge">Tax Slab: –</div>
-    </div>
-
-    <!-- Summary Tiles -->
-    <div class="summary-grid">
-      <div class="summary-tile">
-        <div class="tile-label">Effective Rate</div>
-        <div class="tile-value amber" id="t-effective">–</div>
-      </div>
-      <div class="summary-tile">
-        <div class="tile-label">Total Tax</div>
-        <div class="tile-value red" id="t-total-tax">–</div>
-      </div>
-      <div class="summary-tile">
-        <div class="tile-label">Medical Benefit</div>
-        <div class="tile-value green" id="t-medical">–</div>
-      </div>
-    </div>
-
-    <!-- Tax Slabs Reference -->
-    <div class="card slabs-card" style="margin-top: 24px;">
-      <div class="card-label">FY 2025–26 Tax Slabs</div>
-      <div id="slabs-list"></div>
-    </div>
-
   </div>
 
-  <p class="footer-note">Based on FBR Pakistan FY 2025-26 Salaried Tax Slabs · For reference only</p>
+  <!-- SLAB REFERENCE -->
+  <div class="card slab-ref">
+    <div class="card-header" style="background: var(--ink);">
+      <span class="icon">📋</span>
+      <h2>FBR Income Tax Slabs — Reference</h2>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Annual Income Range (PKR)</th>
+            <th>Rate</th>
+            <th style="text-align:right">Fixed Tax</th>
+            <th style="text-align:right">Tax on PKR 1M Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Up to 6,00,000</td><td>0%</td><td style="text-align:right">—</td><td style="text-align:right">0</td></tr>
+          <tr><td>6,00,001 – 12,00,000</td><td>1%</td><td style="text-align:right">—</td><td style="text-align:right">4,000</td></tr>
+          <tr><td>12,00,001 – 22,00,000</td><td>11%</td><td style="text-align:right">6,000</td><td style="text-align:right">—</td></tr>
+          <tr><td>22,00,001 – 32,00,000</td><td>23%</td><td style="text-align:right">1,16,000</td><td style="text-align:right">—</td></tr>
+          <tr><td>32,00,001 – 41,00,000</td><td>30%</td><td style="text-align:right">3,46,000</td><td style="text-align:right">—</td></tr>
+          <tr><td>Above 41,00,000</td><td>35%</td><td style="text-align:right">6,16,000</td><td style="text-align:right">—</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:12px 16px; font-size:11px; color:var(--ink-soft); background:var(--cream); border-top:1px solid var(--border);">
+        ⚠️ A <strong>9% surcharge</strong> applies where annual taxable income exceeds PKR 1 crore (10,000,000) for FY 2025-26.
+        Fiscal year: <strong>1 July 2025 – 30 June 2026</strong>.
+      </div>
+    </div>
+  </div>
 
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This calculator is for informational purposes based on FBR slab rates (Finance Act 2025-26).
+    It does not constitute professional tax advice. Consult a qualified tax advisor or visit <strong>iris.fbr.gov.pk</strong> for official guidance.
+  </div>
 </div>
 
 <script>
-  // FBR FY 2025-26 Salaried Tax Slabs (Annual Income)
-  const TAX_SLABS = [
-    { min: 0,        max: 600000,   fixed: 0,      rate: 0,    label: "Up to Rs. 600,000" },
-    { min: 600001,   max: 1200000,  fixed: 0,      rate: 0.01, label: "Rs. 600,001 - 1,200,000" },
-    { min: 1200001,  max: 2200000,  fixed: 6000,   rate: 0.11, label: "Rs. 1,200,001 - 2,200,000" },
-    { min: 2200001,  max: 3200000,  fixed: 116000, rate: 0.23, label: "Rs. 2,200,001 - 3,200,000" },
-    { min: 3200001,  max: 4100000,  fixed: 346000, rate: 0.30, label: "Rs. 3,200,001 - 4,100,000" },
-    { min: 4100001,  max: Infinity, fixed: 616000, rate: 0.35, label: "Above Rs. 4,100,000" },
-  ];
+// ===================== TAX SLABS =====================
+const TAX_SLABS = {
+  '2526': [
+    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
+    { min: 600001,    max: 1200000,   rate: 0.01,  fixed: 0 },
+    { min: 1200001,   max: 2200000,   rate: 0.11,  fixed: 6000 },
+    { min: 2200001,   max: 3200000,   rate: 0.23,  fixed: 116000 },
+    { min: 3200001,   max: 4100000,   rate: 0.30,  fixed: 346000 },
+    { min: 4100001,   max: Infinity,  rate: 0.35,  fixed: 616000 },
+  ],
+  '2425': [
+    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
+    { min: 600001,    max: 1200000,   rate: 0.05,  fixed: 0 },
+    { min: 1200001,   max: 2200000,   rate: 0.15,  fixed: 30000 },
+    { min: 2200001,   max: 3200000,   rate: 0.25,  fixed: 180000 },
+    { min: 3200001,   max: 4100000,   rate: 0.30,  fixed: 430000 },
+    { min: 4100001,   max: Infinity,  rate: 0.35,  fixed: 700000 },
+  ],
+  '2324': [
+    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
+    { min: 600001,    max: 1200000,   rate: 0.025, fixed: 0 },
+    { min: 1200001,   max: 2400000,   rate: 0.125, fixed: 15000 },
+    { min: 2400001,   max: 3600000,   rate: 0.225, fixed: 165000 },
+    { min: 3600001,   max: 6000000,   rate: 0.275, fixed: 435000 },
+    { min: 6000001,   max: Infinity,  rate: 0.35,  fixed: 1095000 },
+  ],
+};
 
-  let period = 'monthly';
+let selectedFY = '2526';
+const MONTHS = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+const MONTH_NUMS = [7,8,9,10,11,12,1,2,3,4,5,6];
 
-  function setPeriod(p) {
-    period = p;
-    document.getElementById('btn-monthly').classList.toggle('active', p === 'monthly');
-    document.getElementById('btn-annual').classList.toggle('active', p === 'annual');
-    const r = document.getElementById('results');
-    if (r.classList.contains('visible')) r.classList.remove('visible');
-  }
+function setFY(fy, btn) {
+  selectedFY = fy;
+  document.querySelectorAll('.fy-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
 
-  function onInputChange() {
-    const r = document.getElementById('results');
-    if (r.classList.contains('visible')) r.classList.remove('visible');
-  }
+function toggleSalaryMode() {
+  const mode = document.getElementById('salaryType').value;
+  document.getElementById('fixedMode').style.display = mode === 'fixed' ? 'block' : 'none';
+  document.getElementById('incrementMode').style.display = mode === 'increment' ? 'block' : 'none';
+}
 
-  function fmt(n) {
-    return Math.round(n).toLocaleString('en-PK');
-  }
-
-  function computeTax(annualTaxable) {
-    for (let i = 0; i < TAX_SLABS.length; i++) {
-      const s = TAX_SLABS[i];
-      if (annualTaxable <= s.max) {
-        const annualTax = s.fixed + Math.max(0, annualTaxable - s.min) * s.rate;
-        return { annualTax: Math.max(0, annualTax), slabIndex: i, slab: s };
+function computeTax(annualIncome, fy) {
+  const slabs = TAX_SLABS[fy];
+  for (let i = slabs.length - 1; i >= 0; i--) {
+    if (annualIncome > slabs[i].min) {
+      const marginal = (annualIncome - slabs[i].min) * slabs[i].rate;
+      let tax = slabs[i].fixed + marginal;
+      // 9% surcharge for income > 10M (FY 2025-26)
+      if (fy === '2526' && annualIncome > 10000000) {
+        tax = tax * 1.09;
       }
+      return Math.max(0, Math.round(tax));
     }
-    const last = TAX_SLABS[TAX_SLABS.length - 1];
-    return { annualTax: last.fixed + (annualTaxable - last.min) * last.rate, slabIndex: TAX_SLABS.length - 1, slab: last };
+  }
+  return 0;
+}
+
+function getActiveSlab(annualIncome, fy) {
+  const slabs = TAX_SLABS[fy];
+  for (let i = slabs.length - 1; i >= 0; i--) {
+    if (annualIncome > slabs[i].min) return i;
+  }
+  return 0;
+}
+
+function fmt(n) {
+  return 'PKR ' + Math.round(n).toLocaleString('en-PK');
+}
+function fmtShort(n) {
+  if (n >= 10000000) return (n / 10000000).toFixed(2) + ' Cr';
+  if (n >= 100000) return (n / 100000).toFixed(2) + ' Lac';
+  return Math.round(n).toLocaleString('en-PK');
+}
+
+function calculate() {
+  const mode = document.getElementById('salaryType').value;
+  const medToggle = document.getElementById('medToggle').checked;
+  const otherDed = parseFloat(document.getElementById('otherDeductions').value) || 0;
+
+  let monthSalaries = [];
+
+  if (mode === 'fixed') {
+    const gross = parseFloat(document.getElementById('grossSalary').value);
+    if (!gross || gross <= 0) { alert('Please enter a valid monthly salary.'); return; }
+    for (let i = 0; i < 12; i++) monthSalaries.push(gross);
+  } else {
+    const oldS = parseFloat(document.getElementById('oldSalary').value);
+    const newS = parseFloat(document.getElementById('newSalary').value);
+    const incMonth = parseInt(document.getElementById('incrementMonth').value);
+    if (!oldS || !newS || oldS <= 0 || newS <= 0) { alert('Please enter both old and new salary.'); return; }
+    for (let i = 0; i < 12; i++) {
+      const mNum = MONTH_NUMS[i]; // Jul=7, Aug=8...
+      // Increment month: compare in fiscal order
+      const fiscalIdx = i; // 0=Jul, 1=Aug...
+      const incFiscalIdx = incMonth >= 7 ? incMonth - 7 : incMonth + 5; // convert to fiscal index
+      monthSalaries.push(fiscalIdx >= incFiscalIdx ? newS : oldS);
+    }
   }
 
-  function calculate() {
-    const raw = parseFloat(document.getElementById('salaryInput').value);
-    if (!raw || raw <= 0) {
-      document.getElementById('salaryInput').focus();
-      document.getElementById('salaryInput').style.borderColor = '#ff7a6b';
-      setTimeout(() => document.getElementById('salaryInput').style.borderColor = '', 1000);
-      return;
-    }
-
-    // Convert to monthly and annual
-    const monthlyGross = period === 'monthly' ? raw : raw / 12;
-    const annualGross  = monthlyGross * 12;
-
-    // Medical allowance: 10% of gross
-    const monthlyMedical = monthlyGross * 0.10;
-    const annualMedical  = monthlyMedical * 12;
-
-    // Taxable income (annual, for slab lookup)
-    const annualTaxable  = annualGross - annualMedical;
-
-    const { annualTax, slabIndex, slab } = computeTax(annualTaxable);
-    const monthlyTax = annualTax / 12;
-
-    // Monthly figures
-    const monthlyTaxableIncome = annualTaxable / 12;
-    const monthlyAfterTax      = monthlyTaxableIncome - monthlyTax;
-    const monthlyTakeHome      = monthlyAfterTax + monthlyMedical;
-    const annualTakeHome       = monthlyTakeHome * 12;
-    const effectiveRate        = annualGross > 0 ? (annualTax / annualGross * 100) : 0;
-
-    // Fill breakdown (all monthly values)
-    document.getElementById('v-gross').textContent        = fmt(monthlyGross);
-    document.getElementById('v-medical').textContent      = fmt(monthlyMedical);
-    document.getElementById('v-taxable').textContent      = fmt(monthlyTaxableIncome);
-    document.getElementById('v-tax').textContent          = fmt(monthlyTax);
-    document.getElementById('v-slab-note').textContent    = 'Annual taxable: Rs. ' + fmt(annualTaxable) + ' | Slab ' + (slabIndex+1) + ': ' + (slab.rate*100) + '% rate applies';
-    document.getElementById('v-after-tax').textContent    = fmt(monthlyAfterTax);
-    document.getElementById('v-medical-back').textContent = fmt(monthlyMedical);
-
-    // Final card headline: monthly take-home
-    document.getElementById('v-final').textContent         = fmt(monthlyTakeHome);
-    document.getElementById('v-final-monthly').textContent = 'Rs. ' + fmt(annualTakeHome) + ' annually';
-    document.getElementById('v-slab-badge').textContent    = 'Tax Slab ' + (slabIndex+1) + ' | ' + (slab.rate*100) + '% Rate';
-
-    // Summary tiles
-    document.getElementById('t-effective').textContent = effectiveRate.toFixed(2) + '%';
-    document.getElementById('t-total-tax').textContent  = 'Rs. ' + fmt(monthlyTax) + '/mo';
-    document.getElementById('t-medical').textContent    = 'Rs. ' + fmt(monthlyMedical) + '/mo';
-
-    // Render slabs table
-    const slabsHtml = TAX_SLABS.map((s, i) => {
-      const rateLabel = s.rate === 0 ? 'Nil' : (s.rate * 100) + '%';
-      const youLabel  = i === slabIndex ? ' ← you' : '';
-      return '<div class="slab-row ' + (i === slabIndex ? 'active-slab' : '') + '">' +
-        '<span class="slab-range">' + s.label + '</span>' +
-        '<span class="slab-rate">' + rateLabel + youLabel + '</span>' +
-        '</div>';
-    }).join('');
-    document.getElementById('slabs-list').innerHTML = slabsHtml;
-
-    const results = document.getElementById('results');
-    results.classList.add('visible');
-    results.style.animation = 'none';
-    results.offsetHeight;
-    results.style.animation = 'slideUp 0.5s ease both';
-    setTimeout(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-  }
-
-  // Enter key support
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') calculate();
+  // Compute taxable per month (after deductions)
+  let monthTaxable = monthSalaries.map(gross => {
+    let deduction = 0;
+    if (medToggle) deduction += gross * 0.10;
+    deduction += otherDed;
+    return Math.max(0, gross - deduction);
   });
-</script>
 
+  const annualGross = monthSalaries.reduce((a, b) => a + b, 0);
+  const annualTaxable = monthTaxable.reduce((a, b) => a + b, 0);
+  const annualMedDed = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
+  const annualOtherDed = otherDed * 12;
+
+  // Compute annual tax on annual taxable
+  const annualTax = computeTax(annualTaxable, selectedFY);
+  const avgMonthlyTax = annualTax / 12;
+
+  // For increment mode, prorate tax per month by taxable salary share
+  let monthTaxes = [];
+  for (let i = 0; i < 12; i++) {
+    const share = annualTaxable > 0 ? monthTaxable[i] / annualTaxable : 1 / 12;
+    monthTaxes.push(Math.round(annualTax * share));
+  }
+
+  const annualNetPay = annualGross - annualTax;
+  const effRate = annualGross > 0 ? (annualTax / annualGross * 100) : 0;
+
+  // ---- RENDER ----
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('resultSection').style.display = 'block';
+  document.getElementById('resultSection').classList.add('visible');
+
+  document.getElementById('rAnnualTaxable').textContent = fmtShort(annualTaxable);
+  document.getElementById('rAnnualTaxableSub').textContent = 'Gross: ' + fmtShort(annualGross);
+  document.getElementById('rAnnualTax').textContent = fmtShort(annualTax);
+  document.getElementById('rAnnualTaxSub').textContent = 'Monthly avg: ' + fmt(avgMonthlyTax);
+  document.getElementById('rMonthlyTax').textContent = fmt(avgMonthlyTax);
+  document.getElementById('rEffRate').textContent = effRate.toFixed(2) + '%';
+  document.getElementById('rNetAnnual').textContent = fmtShort(annualNetPay);
+  document.getElementById('rNetMonthlySub').textContent = 'Avg monthly net: ' + fmt(annualNetPay / 12);
+
+  // Rate bar
+  const barPct = Math.min(effRate * 2.5, 100);
+  document.getElementById('rBarFill').style.width = barPct + '%';
+  document.getElementById('rBarLabel').textContent = effRate.toFixed(2) + '%';
+
+  // Deduction breakdown table
+  const dBody = document.getElementById('deductionBody');
+  dBody.innerHTML = '';
+  const rows = [
+    ['Annual Gross Salary', annualGross, ''],
+    medToggle ? ['Less: Medical Allowance (10%)', -annualMedDed, 'Tax-exempt under ITO §12'] : null,
+    annualOtherDed > 0 ? ['Less: Other Deductions', -annualOtherDed, ''] : null,
+    ['Annual Taxable Income', annualTaxable, ''],
+    ['Annual Income Tax', -annualTax, 'As per FBR slabs FY ' + (selectedFY === '2526' ? '2025-26' : selectedFY === '2425' ? '2024-25' : '2023-24')],
+    annualTaxable > 10000000 && selectedFY === '2526' ? ['  incl. 9% Surcharge (>1 Cr)', '', 'Applied within tax above'] : null,
+    ['Annual Net Take-Home', annualNetPay, ''],
+  ].filter(Boolean);
+
+  rows.forEach(([label, val, note], idx) => {
+    const tr = document.createElement('tr');
+    const isTotal = label.includes('Taxable Income') || label.includes('Net Take-Home');
+    tr.innerHTML = `
+      <td style="${isTotal ? 'font-weight:600;' : ''}">${label}${note ? '<br><span style="font-size:10px;color:var(--ink-soft)">' + note + '</span>' : ''}</td>
+      <td style="text-align:right;${val < 0 ? 'color:var(--red);' : isTotal ? 'color:var(--emerald);font-weight:600;' : ''}">
+        ${typeof val === 'number' ? (val < 0 ? '− PKR ' + Math.abs(val).toLocaleString('en-PK') : 'PKR ' + Math.round(val).toLocaleString('en-PK')) : val}
+      </td>`;
+    dBody.appendChild(tr);
+  });
+
+  // Monthly detailed table
+  const mHead = document.getElementById('monthlyHead');
+  const mRows = document.getElementById('monthlyRows');
+  const mFoot = document.getElementById('monthlyFoot');
+  mHead.innerHTML = '';
+  mRows.innerHTML = '';
+  mFoot.innerHTML = '';
+
+  // Build columns dynamically based on toggles
+  const cols = ['Month', 'Gross Salary'];
+  if (medToggle) cols.push('Medical (10%)');
+  if (annualOtherDed > 0) cols.push('Other Ded.');
+  cols.push('Taxable Salary', 'Income Tax', 'Net Take-Home');
+
+  // Header
+  mHead.innerHTML = cols.map((c,i) => `<th style="${i>0?'text-align:right':''}">${c}</th>`).join('');
+
+  // Totals accumulators
+  let totGross=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0;
+
+  MONTHS.forEach((mon, i) => {
+    const gross = monthSalaries[i];
+    const med = medToggle ? Math.round(gross * 0.10) : 0;
+    const other = otherDed;
+    const taxable = monthTaxable[i];
+    const tax = monthTaxes[i];
+    const net = gross - tax;
+
+    totGross += gross; totMed += med; totOther += other;
+    totTaxable += taxable; totTax += tax; totNet += net;
+
+    const tr = document.createElement('tr');
+    // highlight increment month
+    const isNew = mode === 'increment' && i > 0 && monthSalaries[i] !== monthSalaries[i-1];
+    if (isNew) tr.style.borderTop = '2px solid var(--gold)';
+
+    let cells = `<td style="font-weight:500">${mon}${isNew ? ' <span style="font-size:9px;background:var(--gold);color:white;padding:1px 5px;border-radius:3px;margin-left:4px">▲ INC</span>' : ''}</td>`;
+    cells += `<td style="text-align:right;font-family:'DM Mono',monospace">${fmt(gross)}</td>`;
+    if (medToggle) cells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red)">− ${fmt(med)}</td>`;
+    if (annualOtherDed > 0) cells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red)">− ${fmt(other)}</td>`;
+    cells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--emerald)">${fmt(taxable)}</td>`;
+    cells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red);font-weight:600">− ${fmt(tax)}</td>`;
+    cells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--ink);font-weight:700">${fmt(net)}</td>`;
+    tr.innerHTML = cells;
+    mRows.appendChild(tr);
+  });
+
+  // Footer totals row
+  const tfr = document.createElement('tr');
+  tfr.style.cssText = 'background:var(--ink);color:white;font-weight:700;';
+  let fcells = `<td style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em">ANNUAL TOTAL</td>`;
+  fcells += `<td style="text-align:right;font-family:'DM Mono',monospace">${fmt(totGross)}</td>`;
+  if (medToggle) fcells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--gold-light)">− ${fmt(totMed)}</td>`;
+  if (annualOtherDed > 0) fcells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:var(--gold-light)">− ${fmt(totOther)}</td>`;
+  fcells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:#7ee8cc">${fmt(totTaxable)}</td>`;
+  fcells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:#f9a8a0">− ${fmt(totTax)}</td>`;
+  fcells += `<td style="text-align:right;font-family:'DM Mono',monospace;color:white">${fmt(totNet)}</td>`;
+  tfr.innerHTML = fcells;
+  mFoot.appendChild(tfr);
+
+  // Scroll to results on mobile
+  if (window.innerWidth < 768) {
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+</script>
 </body>
 </html>
