@@ -587,7 +587,7 @@
         </div>
 
         <div class="table-responsive" style="margin-bottom: 32px;">
-          <table id="monthlyTable" style="min-width:640px;">
+          <table id="monthlyTable" style="min-width:760px;">
             <thead>
               <tr id="monthlyHead"></tr>
             </thead>
@@ -772,7 +772,7 @@ function calculate() {
   document.getElementById('rAnnualTaxableSub').textContent = 'Gross Array: ' + fmtShort(annualGross);
   document.getElementById('rAnnualTax').textContent = fmtShort(annualTax);
   document.getElementById('rAnnualTaxSub').textContent = 'Monthly split: ' + fmt(avgMonthlyTax);
-  document.getElementById('rMonthlyTax').textContent = fmt(avgMonthlyTax);
+  document.getElementById('rMonthlyTax').textContent = fmt(fmtMath = avgMonthlyTax);
   document.getElementById('rEffRate').textContent = effRate.toFixed(2) + '%';
   document.getElementById('rNetAnnual').textContent = fmtShort(annualNetPay);
   document.getElementById('rNetMonthlySub').textContent = 'Monthly Yield: ' + fmt(annualNetPay / 12);
@@ -811,11 +811,13 @@ function calculate() {
   const cols = ['Period Cluster', 'Base Earnings'];
   if (medToggle) cols.push('Medical Ded.');
   if (annualOtherDed > 0) cols.push('Other Adj.');
-  cols.push('Taxable Target', 'Tax Delta', 'Net Result');
+  cols.push('Taxable Target', 'Tax Delta');
+  if (annualOtherDed > 0) cols.push('On Account');
+  cols.push('Net Result');
 
   mHead.innerHTML = cols.map((c,i) => `<th style="${i>0?'text-align:right':''}">${c}</th>`).join('');
 
-  let totGross=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0;
+  let totGross=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totOnAccount=0, totNet=0;
 
   MONTHS.forEach((mon, i) => {
     const gross = monthSalaries[i];
@@ -823,10 +825,11 @@ function calculate() {
     const other = monthOtherDed[i];
     const taxable = monthTaxable[i];
     const tax = monthTaxes[i];
+    const onAccount = gross - tax - other;
     const net = gross - tax;
 
     totGross += gross; totMed += med; totOther += other;
-    totTaxable += taxable; totTax += tax; totNet += net;
+    totTaxable += taxable; totTax += tax; totOnAccount += onAccount; totNet += net;
 
     const tr = document.createElement('tr');
     const isNew = mode === 'increment' && i > 0 && monthSalaries[i] !== monthSalaries[i-1];
@@ -838,6 +841,7 @@ function calculate() {
     if (annualOtherDed > 0) cells += `<td style="text-align:right;color:var(--rose)">− ${fmt(other)}</td>`;
     cells += `<td style="text-align:right;color:var(--slate-900); font-weight:600;">${fmt(taxable)}</td>`;
     cells += `<td style="text-align:right;color:var(--rose);font-weight:600">− ${fmt(tax)}</td>`;
+    if (annualOtherDed > 0) cells += `<td style="text-align:right;color:var(--slate-900);font-weight:600">${fmt(onAccount)}</td>`;
     cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">${fmt(net)}</td>`;
     tr.innerHTML = cells;
     mRows.appendChild(tr);
@@ -851,6 +855,7 @@ function calculate() {
   if (annualOtherDed > 0) fcells += `<td style="text-align:right;color:#cbd5e1">− ${fmt(totOther)}</td>`;
   fcells += `<td style="text-align:right;color:var(--mint-ef)">${fmt(totTaxable)}</td>`;
   fcells += `<td style="text-align:right;color:#fda4af">− ${fmt(totTax)}</td>`;
+  if (annualOtherDed > 0) fcells += `<td style="text-align:right;color:#cbd5e1">${fmt(totOnAccount)}</td>`;
   fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totNet)}</td>`;
   tfr.innerHTML = fcells;
   mFoot.appendChild(tfr);
