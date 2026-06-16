@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pakistan Salary Tax Calculator — FY 2025-26</title>
+<title>Pakistan Salary Tax Calculator — FY 2026-27</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -192,35 +191,6 @@
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
   }
 
-  /* INTERACTIVE ELEMENTS */
-  .fy-selector {
-    display: flex;
-    gap: 10px;
-  }
-  .fy-btn {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius-md);
-    background: var(--slate-50);
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    color: var(--slate-500);
-    transition: var(--transition);
-    text-align: center;
-  }
-  .fy-btn:hover {
-    border-color: var(--slate-400);
-    color: var(--slate-700);
-  }
-  .fy-btn.active {
-    border-color: var(--slate-900);
-    background: var(--slate-900);
-    color: white;
-    box-shadow: 0 4px 6px rgba(15, 23, 42, 0.2);
-  }
-
   .toggle-row {
     display: flex;
     align-items: center;
@@ -267,7 +237,7 @@
   .calc-btn:hover { background: var(--slate-900); transform: translateY(-2px); box-shadow: 0 8px 12px rgba(15, 23, 42, 0.3); }
   .calc-btn:active { transform: translateY(0); }
 
-  /* RESULTS ACCORDION & BLOCKS */
+  /* RESULTS */
   .results-placeholder {
     display: flex;
     flex-direction: column;
@@ -359,7 +329,7 @@
     font-size: 14px;
     color: var(--slate-800);
     font-weight: 800;
-    margin: 32px 0 16px;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -449,7 +419,7 @@
       <p>Federal Board of Revenue · Salaried Individuals</p>
     </div>
   </div>
-  <div class="fy-badge">2025–26</div>
+  <div class="fy-badge">FY 2026–27</div>
 </header>
 
 <div class="app">
@@ -459,15 +429,6 @@
       <h2>Salary Information</h2>
     </div>
     <div class="card-body">
-
-      <div class="form-section">
-        <div class="section-label">Tax Year</div>
-        <div class="fy-selector">
-          <div class="fy-btn active" onclick="setFY('2526', this)">2025–26</div>
-          <div class="fy-btn" onclick="setFY('2425', this)">2024–25</div>
-          <div class="fy-btn" onclick="setFY('2324', this)">2023–24</div>
-        </div>
-      </div>
 
       <div class="form-section">
         <div class="section-label">Salary Mode</div>
@@ -618,7 +579,13 @@
           </div>
         </div>
 
-        <div class="breakdown-title">Step-by-Step Calculations Ledger</div>
+        <div class="ledger-header-wrap" style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 16px;">
+          <div class="breakdown-title">Step-by-Step Calculations Ledger</div>
+          <button id="exportBtn" style="padding: 8px 16px; background: var(--slate-900); color: white; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 6px; transition: var(--transition);" onclick="exportLedger()">
+            <span>📥</span> Export CSV
+          </button>
+        </div>
+
         <div class="table-responsive" style="margin-bottom: 32px;">
           <table id="monthlyTable" style="min-width:640px;">
             <thead>
@@ -629,7 +596,7 @@
           </table>
         </div>
 
-        <div class="breakdown-title">Income Progression Matrix</div>
+        <div class="breakdown-title" style="margin: 32px 0 16px;">Income Progression Matrix</div>
         <div class="table-responsive" style="margin-bottom: 8px;">
           <table id="deductionTable">
             <thead>
@@ -646,7 +613,7 @@
   <div class="card slab-ref">
     <div class="card-header">
       <span class="icon">📋</span>
-      <h2>Statutory FBR Income Brackets (Reference Matrix)</h2>
+      <h2>Statutory FBR Income Brackets (Reference Matrix — FY 2026-27)</h2>
     </div>
     <div class="card-body" style="padding: 0;">
       <div class="table-responsive" style="border:none; border-radius:0;">
@@ -656,21 +623,23 @@
               <th>Annual Income Range (PKR)</th>
               <th>Marginal Rate</th>
               <th style="text-align:right">Fixed Baseline Tax</th>
-              <th style="text-align:right">Sample Tier Eval (1M)</th>
+              <th style="text-align:right">Calculation Rule</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>Up to 6,00,000</td><td>0%</td><td style="text-align:right">—</td><td style="text-align:right">0</td></tr>
-            <tr><td>6,00,001 – 12,00,000</td><td>1%</td><td style="text-align:right">—</td><td style="text-align:right">4,000</td></tr>
-            <tr><td>12,00,001 – 22,00,000</td><td>11%</td><td style="text-align:right">6,000</td><td style="text-align:right">—</td></tr>
-            <tr><td>22,00,001 – 32,00,000</td><td>23%</td><td style="text-align:right">1,16,000</td><td style="text-align:right">—</td></tr>
-            <tr><td>32,00,001 – 41,00,000</td><td>30%</td><td style="text-align:right">3,46,000</td><td style="text-align:right">—</td></tr>
-            <tr><td>Above 41,00,000</td><td>35%</td><td style="text-align:right">6,16,000</td><td style="text-align:right">—</td></tr>
+            <tr><td>Below 6,00,000</td><td>0%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">Rs. 0</td></tr>
+            <tr><td>6,00,000 – 1,200,000</td><td>1%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">1% of amount exceeding Rs. 600,000</td></tr>
+            <tr><td>1,200,000 – 2,200,000</td><td>11%</td><td style="text-align:right">Rs. 6,000</td><td style="text-align:right">Rs. 6,000 + 11% of amount exceeding Rs. 1,200,000</td></tr>
+            <tr><td>2,200,000 – 3,200,000</td><td>20%</td><td style="text-align:right">Rs. 116,000</td><td style="text-align:right">Rs. 116,000 + 20% of amount exceeding Rs. 2,200,000</td></tr>
+            <tr><td>3,200,000 – 4,100,000</td><td>25%</td><td style="text-align:right">Rs. 316,000</td><td style="text-align:right">Rs. 316,000 + 25% of amount exceeding Rs. 3,200,000</td></tr>
+            <tr><td>4,100,000 – 5,600,000</td><td>29%</td><td style="text-align:right">Rs. 541,000</td><td style="text-align:right">Rs. 541,000 + 29% of amount exceeding Rs. 4,100,000</td></tr>
+            <tr><td>5,600,000 – 7,00,000</td><td>32%</td><td style="text-align:right">Rs. 976,000</td><td style="text-align:right">Rs. 976,000 + 32% of amount exceeding Rs. 5,600,000</td></tr>
+            <tr><td>Above 7,000,000</td><td>35%</td><td style="text-align:right">Rs. 1,424,000</td><td style="text-align:right">Rs. 1,424,000 + 35% of amount exceeding Rs. 7,000,000</td></tr>
           </tbody>
         </table>
       </div>
       <div class="slab-info-footer">
-        ⚠️ A 9% structural surcharge threshold kicks in if the gross evaluation scope steps higher than 10,000,000 PKR within the 2025-26 cycle run.
+        ℹ️ Slabs updated strictly in alignment with Federal Budget 2026-27 statutory layout definitions.
       </div>
     </div>
   </div>
@@ -681,43 +650,18 @@
 </div>
 
 <script>
-// Logic parameters remain intact to protect calculation accuracy
-const TAX_SLABS = {
-  '2526': [
-    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
-    { min: 600001,    max: 1200000,   rate: 0.01,  fixed: 0 },
-    { min: 1200001,   max: 2200000,   rate: 0.11,  fixed: 6000 },
-    { min: 2200001,   max: 3200000,   rate: 0.23,  fixed: 116000 },
-    { min: 3200001,   max: 4100000,   rate: 0.30,  fixed: 346000 },
-    { min: 4100001,   max: Infinity,  rate: 0.35,  fixed: 616000 },
-  ],
-  '2425': [
-    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
-    { min: 600001,    max: 1200000,   rate: 0.05,  fixed: 0 },
-    { min: 1200001,   max: 2200000,   rate: 0.15,  fixed: 30000 },
-    { min: 2200001,   max: 3200000,   rate: 0.25,  fixed: 180000 },
-    { min: 3200001,   max: 4100000,   rate: 0.30,  fixed: 430000 },
-    { min: 4100001,   max: Infinity,  rate: 0.35,  fixed: 700000 },
-  ],
-  '2324': [
-    { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
-    { min: 600001,    max: 1200000,   rate: 0.025, fixed: 0 },
-    { min: 1200001,   max: 2400000,   rate: 0.125, fixed: 15000 },
-    { min: 2400001,   max: 3600000,   rate: 0.225, fixed: 165000 },
-    { min: 3600001,   max: 6000000,   rate: 0.275, fixed: 435000 },
-    { min: 6000011,   max: Infinity,  rate: 0.35,  fixed: 1095000 },
-  ],
-};
+const TAX_SLABS = [
+  { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
+  { min: 600000,    max: 1200000,   rate: 0.01,  fixed: 0 },
+  { min: 1200001,   max: 2200000,   rate: 0.11,  fixed: 6000 },
+  { min: 2200001,   max: 3200000,   rate: 0.20,  fixed: 116000 },
+  { min: 3200001,   max: 4100000,   rate: 0.25,  fixed: 316000 },
+  { min: 4100001,   max: 5600000,   rate: 0.29,  fixed: 541000 },
+  { min: 5600001,   max: 7000000,   rate: 0.32,  fixed: 976000 },
+  { min: 7000001,   max: Infinity,  rate: 0.35,  fixed: 1424000 },
+];
 
-let selectedFY = '2526';
 const MONTHS = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
-const MONTH_NUMS = [7,8,9,10,11,12,1,2,3,4,5,6];
-
-function setFY(fy, btn) {
-  selectedFY = fy;
-  document.querySelectorAll('.fy-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
 
 function toggleSalaryMode() {
   const mode = document.getElementById('salaryType').value;
@@ -725,15 +669,11 @@ function toggleSalaryMode() {
   document.getElementById('incrementMode').style.display = mode === 'increment' ? 'block' : 'none';
 }
 
-function computeTax(annualIncome, fy) {
-  const slabs = TAX_SLABS[fy];
-  for (let i = slabs.length - 1; i >= 0; i--) {
-    if (annualIncome > slabs[i].min) {
-      const marginal = (annualIncome - slabs[i].min) * slabs[i].rate;
-      let tax = slabs[i].fixed + marginal;
-      if (fy === '2526' && annualIncome > 10000000) {
-        tax = tax * 1.09;
-      }
+function computeTax(annualIncome) {
+  for (let i = TAX_SLABS.length - 1; i >= 0; i--) {
+    if (annualIncome > TAX_SLABS[i].min) {
+      const marginal = (annualIncome - TAX_SLABS[i].min) * TAX_SLABS[i].rate;
+      let tax = TAX_SLABS[i].fixed + marginal;
       return Math.max(0, Math.round(tax));
     }
   }
@@ -801,7 +741,6 @@ function calculate() {
   const annualMedDed = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
   const annualOtherDed = monthOtherDed.reduce((a, b) => a + b, 0);
 
-  // Progressive Payroll Simulation (Month-by-Month)
   let monthTaxes = [];
   let ytdTax = 0;
   let ytdTaxable = 0;
@@ -809,7 +748,7 @@ function calculate() {
   for (let i = 0; i < 12; i++) {
     let currentMonthTaxable = monthTaxable[i];
     let projectedAnnualTaxable = ytdTaxable + (currentMonthTaxable * (12 - i));
-    let projectedAnnualTax = computeTax(projectedAnnualTaxable, selectedFY);
+    let projectedAnnualTax = computeTax(projectedAnnualTaxable);
     let remainingTax = projectedAnnualTax - ytdTax;
     let currentMonthTax = Math.max(0, Math.round(remainingTax / (12 - i)));
 
@@ -827,6 +766,7 @@ function calculate() {
   document.getElementById('placeholder').style.display = 'none';
   document.getElementById('resultSection').style.display = 'block';
   document.getElementById('resultSection').classList.add('visible');
+  document.getElementById('exportBtn').style.display = 'flex';
 
   document.getElementById('rAnnualTaxable').textContent = fmtShort(annualTaxable);
   document.getElementById('rAnnualTaxableSub').textContent = 'Gross Array: ' + fmtShort(annualGross);
@@ -848,8 +788,7 @@ function calculate() {
     medToggle ? ['Exempt Baseline Medical (10%)', -annualMedDed, 'ITO Sec 12 Exemption Framework'] : null,
     annualOtherDed > 0 ? ['Custom Allocated Adjustments', -annualOtherDed, `PKR ${otherDed.toLocaleString('en-PK')}/mo × ${12 - otherDedFiscalIdx} cycle steps`] : null,
     ['Annual Net Taxable Target', annualTaxable, ''],
-    ['Aggregated Income Tax Liability', -annualTax, 'Slab Evaluator Set: FY ' + selectedFY],
-    annualTaxable > 10000000 && selectedFY === '2526' ? ['Structural Surcharge Active (>1 Cr)', '', 'Integrated inside metrics above'] : null,
+    ['Aggregated Income Tax Liability', -annualTax, 'Slab Evaluator Set: FY 2026-27'],
     ['Net Residual Take-Home Pay', annualNetPay, ''],
   ].filter(Boolean);
 
@@ -920,8 +859,43 @@ function calculate() {
     document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
+
+function exportLedger() {
+  const table = document.getElementById('monthlyTable');
+  let csv = [];
+  
+  // Headers
+  const ths = table.querySelectorAll('thead th');
+  const headerRow = Array.from(ths).map(th => `"${th.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
+  csv.push(headerRow.join(','));
+  
+  // Data rows
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row => {
+    const tds = row.querySelectorAll('td');
+    const rowData = Array.from(tds).map(td => `"${td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
+    csv.push(rowData.join(','));
+  });
+  
+  // Totals Footer row
+  const footTds = table.querySelectorAll('tfoot td');
+  if (footTds.length > 0) {
+    const footData = Array.from(footTds).map(td => `"${td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
+    csv.push(footData.join(','));
+  }
+  
+  // Trigger file download with UTF-8 BOM protection for cleaner rendering in Excel
+  const csvContent = "\uFEFF" + csv.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "Pakistan_Salary_Tax_Ledger_FY2026-27.csv");
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 </body>
 </html>
-
-```
