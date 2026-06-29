@@ -927,11 +927,11 @@ function calculate() {
   if (hasAdj) cols.push('One-Time Adj.');
   if (medToggle) cols.push('Medical Ded.');
   if (annualOtherDed > 0) cols.push('Other Adj.');
-  cols.push('Taxable', 'Tax Withheld', 'Net Pay');
+ cols.push('Taxable', 'Tax Withheld', 'Net Pay', 'On Account');
 
   mHead.innerHTML = cols.map((c, i) => `<th style="${i > 0 ? 'text-align:right' : ''}">${c}</th>`).join('');
 
-  let totGross=0, totAdj=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0;
+let totGross=0, totAdj=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0, totOnAccount=0;
 
   MONTHS.forEach((mon, i) => {
     const gross    = monthSalaries[i];
@@ -942,6 +942,7 @@ function calculate() {
     const tax      = monthTaxes[i];
     const incAdj   = Math.max(0, adj);
     const net      = gross + incAdj - tax;
+    const onAccount = net - other;
 
     totGross   += gross;
     totAdj     += adj;
@@ -950,6 +951,7 @@ function calculate() {
     totTaxable += taxable;
     totTax     += tax;
     totNet     += net;
+    totOnAccount += onAccount;
 
     const tr    = document.createElement('tr');
     const isNew = mode === 'increment' && i > 0 && monthSalaries[i] !== monthSalaries[i-1];
@@ -974,6 +976,7 @@ function calculate() {
     cells += `<td style="text-align:right;font-weight:600">${fmt(taxable)}</td>`;
     cells += `<td style="text-align:right;color:var(--rose);font-weight:600">− ${fmt(tax)}</td>`;
     cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">${fmt(net)}</td>`;
+    cells += `<td style="text-align:right;color:var(--slate-900);font-weight:700">${fmt(onAccount)}</td>`;
 
     tr.innerHTML = cells;
     mRows.appendChild(tr);
@@ -993,6 +996,7 @@ function calculate() {
   fcells += `<td style="text-align:right;color:var(--mint-ef)">${fmt(totTaxable)}</td>`;
   fcells += `<td style="text-align:right;color:#fda4af">− ${fmt(totTax)}</td>`;
   fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totNet)}</td>`;
+  fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totOnAccount)}</td>`;
   tfr.innerHTML = fcells;
   mFoot.appendChild(tfr);
 
