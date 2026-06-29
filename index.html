@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -398,6 +399,51 @@
     font-weight: 500;
   }
 
+  /* ONE-TIME MONTHLY ADJUSTMENTS UI */
+  .adj-section-info {
+    font-size: 12px;
+    color: var(--slate-500);
+    margin-bottom: 14px;
+    line-height: 1.6;
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .adj-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    transition: var(--transition);
+  }
+  .adj-row:hover { background: white; border-color: var(--slate-300); }
+  .adj-month-lbl {
+    width: 80px; font-size: 13px; font-weight: 700; color: var(--slate-700); flex-shrink: 0;
+  }
+  .adj-row .adj-type-sel {
+    width: 108px; flex-shrink: 0;
+    padding: 8px 10px; border: 1px solid var(--slate-200);
+    border-radius: var(--radius-sm); font-size: 12px;
+    font-weight: 700; background: white; color: var(--slate-900);
+    cursor: pointer; transition: var(--transition);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .adj-row .adj-type-sel:focus { outline: none; border-color: var(--mint-ef); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+  .adj-row .adj-amount-inp {
+    flex: 1; min-width: 80px;
+    padding: 8px 10px; border: 1px solid var(--slate-200);
+    border-radius: var(--radius-sm); font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    background: white; color: var(--slate-900);
+    transition: var(--transition);
+  }
+  .adj-row .adj-amount-inp:focus { outline: none; border-color: var(--mint-ef); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+
   @media (max-width: 968px) {
     header { padding: 20px 24px; }
     .app { grid-template-columns: 1fr; gap: 24px; padding: 24px 16px; }
@@ -406,6 +452,8 @@
   @media (max-width: 640px) {
     .summary-grid { grid-template-columns: 1fr; }
     .stat-box.highlight-net { grid-column: span 1; }
+    .adj-row { flex-wrap: wrap; }
+    .adj-row .adj-amount-inp { width: 100%; }
   }
 </style>
 </head>
@@ -522,6 +570,14 @@
         </div>
       </div>
 
+      <div class="form-section">
+        <div class="section-label">One-Time Monthly Adjustments</div>
+        <div class="adj-section-info">
+          Add bonuses, arrears, or any non-recurring amounts received in a specific month. The tax impact recalculates from that month forward and spreads across remaining months of the fiscal year.
+        </div>
+        <div id="adjList"></div>
+      </div>
+
       <button class="calc-btn" onclick="calculate()">
         <span>⚡</span> Run Calculation Model
       </button>
@@ -627,7 +683,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>Below 6,00,000</td><td>0%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">Rs. 0</td></tr>
+            <tr><td>Below 6,0,000</td><td>0%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">Rs. 0</td></tr>
             <tr><td>6,00,000 – 1,200,000</td><td>1%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">1% of amount exceeding Rs. 600,000</td></tr>
             <tr><td>1,200,000 – 2,200,000</td><td>11%</td><td style="text-align:right">Rs. 6,000</td><td style="text-align:right">Rs. 6,000 + 11% of amount exceeding Rs. 1,200,000</td></tr>
             <tr><td>2,200,000 – 3,200,000</td><td>20%</td><td style="text-align:right">Rs. 116,000</td><td style="text-align:right">Rs. 116,000 + 20% of amount exceeding Rs. 2,200,000</td></tr>
@@ -662,6 +718,26 @@ const TAX_SLABS = [
 ];
 
 const MONTHS = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+const FULL_MONTHS = ['July','August','September','October','November','December','January','February','March','April','May','June'];
+
+function initAdjustments() {
+  const container = document.getElementById('adjList');
+  container.innerHTML = '';
+  FULL_MONTHS.forEach((mon, idx) => {
+    const div = document.createElement('div');
+    div.className = 'adj-row';
+    div.dataset.monthIdx = idx;
+    div.innerHTML = `
+      <div class="adj-month-lbl">${mon}</div>
+      <select class="adj-type-sel" title="Adjustment type">
+        <option value="add">＋ Income</option>
+        <option value="sub">− Deduction</option>
+      </select>
+      <input type="number" class="adj-amount-inp" placeholder="0" min="0" title="Amount">
+    `;
+    container.appendChild(div);
+  });
+}
 
 function toggleSalaryMode() {
   const mode = document.getElementById('salaryType').value;
@@ -701,6 +777,18 @@ function toggleOtherDedMonth() {
   }
 }
 
+function getAdjustments() {
+  const rows = document.querySelectorAll('#adjList .adj-row');
+  const list = [];
+  rows.forEach(row => {
+    const isIncome = row.querySelector('.adj-type-sel').value === 'add';
+    const fiscalIdx = parseInt(row.dataset.monthIdx);
+    const amount = parseFloat(row.querySelector('.adj-amount-inp').value) || 0;
+    if (amount > 0) list.push({ fiscalIdx, amount, isIncome });
+  });
+  return list;
+}
+
 function calculate() {
   const mode = document.getElementById('salaryType').value;
   const medToggle = document.getElementById('medToggle').checked;
@@ -720,59 +808,80 @@ function calculate() {
     const incMonth = parseInt(document.getElementById('incrementMonth').value);
     if (!oldS || !newS || oldS <= 0 || newS <= 0) { alert('Please enter both old and new salary.'); return; }
     for (let i = 0; i < 12; i++) {
-      const fiscalIdx = i;
       const incFiscalIdx = incMonth >= 7 ? incMonth - 7 : incMonth + 5;
-      monthSalaries.push(fiscalIdx >= incFiscalIdx ? newS : oldS);
+      monthSalaries.push(i >= incFiscalIdx ? newS : oldS);
     }
   }
 
-  let monthOtherDed = [];
-  let monthTaxable = monthSalaries.map((gross, i) => {
-    let deduction = 0;
-    if (medToggle) deduction += gross * 0.10;
-    const ded = (i >= otherDedFiscalIdx) ? otherDed : 0;
-    monthOtherDed.push(ded);
-    deduction += ded;
-    return Math.max(0, gross - deduction);
+  /* ── One-time adjustments ── */
+  const adjustments   = getAdjustments();
+  const monthAdjSign  = new Array(12).fill(0); // net signed value per month
+  adjustments.forEach(({ fiscalIdx, amount, isIncome }) => {
+    monthAdjSign[fiscalIdx] += isIncome ? amount : -amount;
+  });
+  const hasAdj = adjustments.length > 0;
+
+  /* ── Build taxable arrays ── */
+  let monthOtherDed      = [];
+  let monthRegularTaxable = monthSalaries.map((gross, i) => {
+    let ded = 0;
+    if (medToggle) ded += gross * 0.10;
+    const od = (i >= otherDedFiscalIdx) ? otherDed : 0;
+    monthOtherDed.push(od);
+    ded += od;
+    return Math.max(0, gross - ded);
   });
 
-  const annualGross = monthSalaries.reduce((a, b) => a + b, 0);
-  const annualTaxable = monthTaxable.reduce((a, b) => a + b, 0);
-  const annualMedDed = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
-  const annualOtherDed = monthOtherDed.reduce((a, b) => a + b, 0);
+  // Full taxable = regular base ± one-time adjustment
+  let monthTaxable = monthRegularTaxable.map((reg, i) => Math.max(0, reg + monthAdjSign[i]));
 
+  /* ── Annual totals ── */
+  const annualGross       = monthSalaries.reduce((a, b) => a + b, 0);
+  const annualIncAdj      = adjustments.filter(a => a.isIncome).reduce((s, a) => s + a.amount, 0);
+  const annualTaxable     = monthTaxable.reduce((a, b) => a + b, 0);
+  const annualMedDed      = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
+  const annualOtherDed    = monthOtherDed.reduce((a, b) => a + b, 0);
+  const annualTotalIncome = annualGross + annualIncAdj; // actual money received
+
+  /* ── Tax calculation: real-payroll projection ── */
   let monthTaxes = [];
-  let ytdTax = 0;
+  let ytdTax     = 0;
   let ytdTaxable = 0;
 
   for (let i = 0; i < 12; i++) {
-    let currentMonthTaxable = monthTaxable[i];
-    let projectedAnnualTaxable = ytdTaxable + (currentMonthTaxable * (12 - i));
-    let projectedAnnualTax = computeTax(projectedAnnualTaxable);
-    let remainingTax = projectedAnnualTax - ytdTax;
-    let currentMonthTax = Math.max(0, Math.round(remainingTax / (12 - i)));
+    const curTaxable = monthTaxable[i];
 
-    monthTaxes.push(currentMonthTax);
-    ytdTax += currentMonthTax;
-    ytdTaxable += currentMonthTaxable;
+    // Sum future REGULAR taxable only (no future one-time adjustments)
+    let futureRegular = 0;
+    for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[j];
+
+    const projAnnualTaxable = Math.max(0, ytdTaxable + curTaxable + futureRegular);
+    const projAnnualTax     = computeTax(projAnnualTaxable);
+    const remainingTax      = projAnnualTax - ytdTax;
+    const remainingMonths   = 12 - i;
+    const curMonthTax       = Math.max(0, Math.round(remainingTax / remainingMonths));
+
+    monthTaxes.push(curMonthTax);
+    ytdTax     += curMonthTax;
+    ytdTaxable += curTaxable;
   }
 
-  const annualTax = ytdTax; 
+  const annualTax    = ytdTax;
   const avgMonthlyTax = annualTax / 12;
+  const annualNetPay  = annualTotalIncome - annualTax;
+  const effRate       = annualTotalIncome > 0 ? (annualTax / annualTotalIncome * 100) : 0;
 
-  const annualNetPay = annualGross - annualTax;
-  const effRate = annualGross > 0 ? (annualTax / annualGross * 100) : 0;
-
+  /* ── Show results ── */
   document.getElementById('placeholder').style.display = 'none';
   document.getElementById('resultSection').style.display = 'block';
   document.getElementById('resultSection').classList.add('visible');
   document.getElementById('exportBtn').style.display = 'flex';
 
   document.getElementById('rAnnualTaxable').textContent = fmtShort(annualTaxable);
-  document.getElementById('rAnnualTaxableSub').textContent = 'Gross Array: ' + fmtShort(annualGross);
+  document.getElementById('rAnnualTaxableSub').textContent = 'Total Income: ' + fmtShort(annualTotalIncome);
   document.getElementById('rAnnualTax').textContent = fmtShort(annualTax);
   document.getElementById('rAnnualTaxSub').textContent = 'Monthly split: ' + fmt(avgMonthlyTax);
-  document.getElementById('rMonthlyTax').textContent = fmt(fmtMath = avgMonthlyTax);
+  document.getElementById('rMonthlyTax').textContent = fmt(avgMonthlyTax);
   document.getElementById('rEffRate').textContent = effRate.toFixed(2) + '%';
   document.getElementById('rNetAnnual').textContent = fmtShort(annualNetPay);
   document.getElementById('rNetMonthlySub').textContent = 'Monthly Yield: ' + fmt(annualNetPay / 12);
@@ -781,81 +890,108 @@ function calculate() {
   document.getElementById('rBarFill').style.width = barPct + '%';
   document.getElementById('rBarLabel').textContent = effRate.toFixed(2) + '%';
 
+  /* ── Income Progression Matrix ── */
   const dBody = document.getElementById('deductionBody');
   dBody.innerHTML = '';
-  const rows = [
-    ['Annual Gross Evaluated', annualGross, ''],
+  const adjDeductionTotal = adjustments.filter(a => !a.isIncome).reduce((s, a) => s + a.amount, 0);
+  const deductRows = [
+    ['Annual Gross Salary', annualGross, ''],
+    annualIncAdj > 0 ? ['One-Time Income Events', annualIncAdj, 'Bonuses / Arrears / Non-Recurring'] : null,
     medToggle ? ['Exempt Baseline Medical (10%)', -annualMedDed, 'ITO Sec 12 Exemption Framework'] : null,
-    annualOtherDed > 0 ? ['Custom Allocated Adjustments', -annualOtherDed, `PKR ${otherDed.toLocaleString('en-PK')}/mo × ${12 - otherDedFiscalIdx} cycle steps`] : null,
+    annualOtherDed > 0 ? ['Custom Recurring Adjustments', -annualOtherDed, `PKR ${otherDed.toLocaleString('en-PK')}/mo × ${12 - otherDedFiscalIdx} cycle steps`] : null,
+    adjDeductionTotal > 0 ? ['One-Time Tax Deductions', -adjDeductionTotal, 'Non-recurring tax-exempt amounts'] : null,
     ['Annual Net Taxable Target', annualTaxable, ''],
     ['Aggregated Income Tax Liability', -annualTax, 'Slab Evaluator Set: FY 2026-27'],
     ['Net Residual Take-Home Pay', annualNetPay, ''],
   ].filter(Boolean);
 
-  rows.forEach(([label, val, note], idx) => {
+  deductRows.forEach(([label, val, note]) => {
     const tr = document.createElement('tr');
     const isTotal = label.includes('Taxable Target') || label.includes('Take-Home');
+    const isBonus = label.includes('Income Events');
     tr.innerHTML = `
       <td style="${isTotal ? 'font-weight:700;' : ''}">${label}${note ? '<br><span style="font-size:12px;color:var(--slate-500);font-weight:500;">' + note + '</span>' : ''}</td>
-      <td style="text-align:right;${val < 0 ? 'color:var(--rose);' : isTotal ? 'color:var(--mint-dark);font-weight:700;' : ''}">
-        ${typeof val === 'number' ? (val < 0 ? '− PKR ' + Math.abs(val).toLocaleString('en-PK') : 'PKR ' + Math.round(val).toLocaleString('en-PK')) : val}
+      <td style="text-align:right;${val < 0 ? 'color:var(--rose);' : isTotal ? 'color:var(--mint-dark);font-weight:700;' : isBonus ? 'color:var(--mint-dark);font-weight:600;' : ''}">
+        ${typeof val === 'number' ? (val < 0 ? '− PKR ' + Math.abs(val).toLocaleString('en-PK') : (isBonus ? '＋ PKR ' : 'PKR ') + Math.round(val).toLocaleString('en-PK')) : val}
       </td>`;
     dBody.appendChild(tr);
   });
 
+  /* ── Monthly Ledger Table ── */
   const mHead = document.getElementById('monthlyHead');
   const mRows = document.getElementById('monthlyRows');
   const mFoot = document.getElementById('monthlyFoot');
   mHead.innerHTML = ''; mRows.innerHTML = ''; mFoot.innerHTML = '';
 
-  const cols = ['Period Cluster', 'Base Earnings'];
+  const cols = ['Period', 'Base Earnings'];
+  if (hasAdj) cols.push('One-Time Adj.');
   if (medToggle) cols.push('Medical Ded.');
   if (annualOtherDed > 0) cols.push('Other Adj.');
-  cols.push('Taxable Target', 'Tax Delta');
-  if (annualOtherDed > 0) cols.push('On Account');
-  cols.push('Net Result');
+  cols.push('Taxable', 'Tax Withheld', 'Net Pay');
 
-  mHead.innerHTML = cols.map((c,i) => `<th style="${i>0?'text-align:right':''}">${c}</th>`).join('');
+  mHead.innerHTML = cols.map((c, i) => `<th style="${i > 0 ? 'text-align:right' : ''}">${c}</th>`).join('');
 
-  let totGross=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totOnAccount=0, totNet=0;
+  let totGross=0, totAdj=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0;
 
   MONTHS.forEach((mon, i) => {
-    const gross = monthSalaries[i];
-    const med = medToggle ? Math.round(gross * 0.10) : 0;
-    const other = monthOtherDed[i];
-    const taxable = monthTaxable[i];
-    const tax = monthTaxes[i];
-    const onAccount = gross - tax - other;
-    const net = gross - tax;
+    const gross    = monthSalaries[i];
+    const adj      = monthAdjSign[i];
+    const med      = medToggle ? Math.round(gross * 0.10) : 0;
+    const other    = monthOtherDed[i];
+    const taxable  = monthTaxable[i];
+    const tax      = monthTaxes[i];
+    const incAdj   = Math.max(0, adj);
+    const net      = gross + incAdj - tax;
 
-    totGross += gross; totMed += med; totOther += other;
-    totTaxable += taxable; totTax += tax; totOnAccount += onAccount; totNet += net;
+    totGross   += gross;
+    totAdj     += adj;
+    totMed     += med;
+    totOther   += other;
+    totTaxable += taxable;
+    totTax     += tax;
+    totNet     += net;
 
-    const tr = document.createElement('tr');
+    const tr    = document.createElement('tr');
     const isNew = mode === 'increment' && i > 0 && monthSalaries[i] !== monthSalaries[i-1];
-    if (isNew) tr.style.borderTop = '2px solid rgba(245, 158, 11, 0.4)';
+    if (isNew) tr.style.borderTop = '2px solid rgba(245,158,11,0.4)';
 
-    let cells = `<td style="font-weight:700; color:var(--slate-700)">${mon}${isNew ? ' <span style="font-size:10px;background:var(--amber);color:white;padding:3px 6px;border-radius:4px;margin-left:6px;font-weight:800;">▲ STEP</span>' : ''}</td>`;
-    cells += `<td style="text-align:right;">${fmt(gross)}</td>`;
+    let cells = `<td style="font-weight:700;color:var(--slate-700)">${mon}${isNew ? ' <span style="font-size:10px;background:var(--amber);color:white;padding:3px 6px;border-radius:4px;margin-left:6px;font-weight:800;">▲ STEP</span>' : ''}</td>`;
+    cells += `<td style="text-align:right">${fmt(gross)}</td>`;
+
+    if (hasAdj) {
+      if (adj > 0) {
+        cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">＋ ${fmt(adj)}</td>`;
+      } else if (adj < 0) {
+        cells += `<td style="text-align:right;color:var(--rose);font-weight:700">− ${fmt(Math.abs(adj))}</td>`;
+      } else {
+        cells += `<td style="text-align:right;color:var(--slate-400)">—</td>`;
+      }
+    }
+
     if (medToggle) cells += `<td style="text-align:right;color:var(--rose)">− ${fmt(med)}</td>`;
     if (annualOtherDed > 0) cells += `<td style="text-align:right;color:var(--rose)">− ${fmt(other)}</td>`;
-    cells += `<td style="text-align:right;color:var(--slate-900); font-weight:600;">${fmt(taxable)}</td>`;
+
+    cells += `<td style="text-align:right;font-weight:600">${fmt(taxable)}</td>`;
     cells += `<td style="text-align:right;color:var(--rose);font-weight:600">− ${fmt(tax)}</td>`;
-    if (annualOtherDed > 0) cells += `<td style="text-align:right;color:var(--slate-900);font-weight:600">${fmt(onAccount)}</td>`;
     cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">${fmt(net)}</td>`;
+
     tr.innerHTML = cells;
     mRows.appendChild(tr);
   });
 
+  /* ── Footer totals row ── */
   const tfr = document.createElement('tr');
   tfr.style.cssText = 'background:var(--slate-900);color:white;font-weight:600;';
   let fcells = `<td style="font-size:12px;letter-spacing:.05em">ANNUAL AGGREGATE</td>`;
-  fcells += `<td style="text-align:right;">${fmt(totGross)}</td>`;
+  fcells += `<td style="text-align:right">${fmt(totGross)}</td>`;
+  if (hasAdj) {
+    const totAdjAbs = Math.abs(totAdj);
+    fcells += `<td style="text-align:right;color:${totAdj >= 0 ? '#6ee7b7' : '#fda4af'}">${totAdj >= 0 ? '＋' : '−'} ${fmt(totAdjAbs)}</td>`;
+  }
   if (medToggle) fcells += `<td style="text-align:right;color:#cbd5e1">− ${fmt(totMed)}</td>`;
   if (annualOtherDed > 0) fcells += `<td style="text-align:right;color:#cbd5e1">− ${fmt(totOther)}</td>`;
   fcells += `<td style="text-align:right;color:var(--mint-ef)">${fmt(totTaxable)}</td>`;
   fcells += `<td style="text-align:right;color:#fda4af">− ${fmt(totTax)}</td>`;
-  if (annualOtherDed > 0) fcells += `<td style="text-align:right;color:#cbd5e1">${fmt(totOnAccount)}</td>`;
   fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totNet)}</td>`;
   tfr.innerHTML = fcells;
   mFoot.appendChild(tfr);
@@ -869,12 +1005,10 @@ function exportLedger() {
   const table = document.getElementById('monthlyTable');
   let csv = [];
   
-  // Headers
   const ths = table.querySelectorAll('thead th');
   const headerRow = Array.from(ths).map(th => `"${th.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
   csv.push(headerRow.join(','));
   
-  // Data rows
   const rows = table.querySelectorAll('tbody tr');
   rows.forEach(row => {
     const tds = row.querySelectorAll('td');
@@ -882,14 +1016,12 @@ function exportLedger() {
     csv.push(rowData.join(','));
   });
   
-  // Totals Footer row
   const footTds = table.querySelectorAll('tfoot td');
   if (footTds.length > 0) {
     const footData = Array.from(footTds).map(td => `"${td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
     csv.push(footData.join(','));
   }
   
-  // Trigger file download with UTF-8 BOM protection for cleaner rendering in Excel
   const csvContent = "\uFEFF" + csv.join('\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -901,6 +1033,11 @@ function exportLedger() {
   link.click();
   document.body.removeChild(link);
 }
+
+// Initial structural build out on view parsing
+initAdjustments();
 </script>
 </body>
 </html>
+
+```
