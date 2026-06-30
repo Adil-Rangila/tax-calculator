@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pakistan Salary Tax Calculator — FY 2026-27</title>
+<title>Employee Tax Management — FY 2026-27</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -13,23 +12,27 @@
     --slate-900: #0f172a;
     --slate-800: #1e293b;
     --slate-700: #334155;
+    --slate-600: #475569;
     --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-300: #cbd5e1;
     --slate-200: #e2e8f0;
     --slate-100: #f1f5f9;
     --slate-50:  #f8fafc;
-    --mint-ef: #10b981;
+    --mint: #10b981;
     --mint-dark: #059669;
     --mint-pale: #ecfdf5;
     --amber: #f59e0b;
     --rose: #f43f5e;
     --rose-pale: #fff1f2;
+    --indigo: #6366f1;
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 10px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.01);
     --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,103 +48,387 @@
   /* HEADER */
   header {
     background: linear-gradient(to right, var(--slate-900), var(--slate-800));
-    padding: 24px 40px;
+    padding: 20px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: var(--shadow-md);
-    border-bottom: 2px solid var(--mint-ef);
+    border-bottom: 2px solid var(--mint);
+    gap: 16px;
+    flex-wrap: wrap;
   }
   .header-brand {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
   }
-  .crescent {
-    font-size: 32px;
-    color: var(--mint-ef);
-    line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(16,185,129,0.3));
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--slate-900);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.35);
   }
   .brand-text h1 {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 800;
     color: white;
     letter-spacing: -0.02em;
   }
   .brand-text p {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--slate-200);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin-top: 2px;
-    opacity: 0.8;
+    opacity: 0.7;
+  }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
   .fy-badge {
     background: rgba(16, 185, 129, 0.15);
     color: var(--mint-pale);
     border: 1px solid rgba(16, 185, 129, 0.3);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    padding: 8px 18px;
+    padding: 7px 14px;
     border-radius: 20px;
     letter-spacing: 0.02em;
+    font-family: 'JetBrains Mono', monospace;
   }
+  .btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    background: var(--mint);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--mint-dark); transform: translateY(-1px); }
+  .btn-ghost-dark {
+    background: rgba(255,255,255,0.06);
+    color: white;
+    border-color: rgba(255,255,255,0.12);
+  }
+  .btn-ghost-dark:hover { background: rgba(255,255,255,0.12); }
+  .btn-secondary {
+    background: white;
+    color: var(--slate-800);
+    border-color: var(--slate-200);
+  }
+  .btn-secondary:hover { background: var(--slate-50); border-color: var(--slate-300); }
+  .btn-danger {
+    background: white;
+    color: var(--rose);
+    border-color: var(--slate-200);
+  }
+  .btn-danger:hover { background: var(--rose-pale); border-color: var(--rose); }
+  .btn-lg {
+    padding: 12px 22px;
+    font-size: 14px;
+  }
+  .btn-block { width: 100%; justify-content: center; }
+  .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-  /* MAIN LAYOUT */
+  /* APP LAYOUT */
   .app {
-    max-width: 1500px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 48px 24px;
+    padding: 28px 24px;
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 32px;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
     align-items: start;
   }
 
-  /* CARD STYLING */
+  /* ROSTER (sidebar) */
+  .roster {
+    background: var(--bg-card);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    position: sticky;
+    top: 24px;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+  }
+  .roster-header {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .roster-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .roster-title h2 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--slate-700);
+  }
+  .roster-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--slate-500);
+    background: var(--slate-100);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .roster-search {
+    padding: 10px 22px 14px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .roster-search input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--slate-50);
+    transition: var(--transition);
+  }
+  .roster-search input:focus {
+    outline: none;
+    border-color: var(--mint);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+  }
+  .roster-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .roster-empty {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--slate-500);
+    font-size: 13px;
+  }
+  .roster-empty .emoji {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.6;
+  }
+  .emp-card {
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    align-items: center;
+  }
+  .emp-card:hover {
+    background: var(--slate-50);
+  }
+  .emp-card.selected {
+    background: var(--mint-pale);
+    border-color: rgba(16,185,129,0.3);
+  }
+  .emp-card.selected .emp-name { color: var(--mint-dark); }
+  .emp-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--slate-800);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .emp-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--slate-500);
+    font-weight: 500;
+    grid-column: 1;
+    margin-top: 1px;
+  }
+  .status-pill {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .status-pending {
+    background: var(--slate-100);
+    color: var(--slate-500);
+  }
+  .status-computed {
+    background: var(--mint-pale);
+    color: var(--mint-dark);
+  }
+
+  /* WORKSPACE */
+  .workspace {
+    min-height: 600px;
+  }
   .card {
     background: var(--bg-card);
     border: 1px solid var(--slate-200);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
-    transition: var(--transition);
   }
-  .card:hover {
-    box-shadow: var(--shadow-md);
-  }
+  .card + .card { margin-top: 20px; }
   .card-header {
-    background: var(--bg-card);
-    padding: 24px 28px 16px;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--slate-100);
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--slate-100);
+    justify-content: space-between;
+    gap: 16px;
   }
-  .card-header h2 {
-    font-size: 17px;
+  .card-header-title h3 {
+    font-size: 16px;
     font-weight: 700;
-    color: var(--slate-800);
+    color: var(--slate-900);
     letter-spacing: -0.01em;
   }
-  .card-header .icon {
-    font-size: 20px;
-    background: var(--slate-50);
-    padding: 8px;
-    border-radius: var(--radius-md);
-    line-height: 1;
-    border: 1px solid var(--slate-100);
+  .card-header-title p {
+    font-size: 12px;
+    color: var(--slate-500);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
   }
   .card-body {
     padding: 28px;
   }
 
-  /* FORM SECTIONS */
+  /* EMPTY STATE */
+  .empty-state {
+    background: var(--bg-card);
+    border: 1px dashed var(--slate-300);
+    border-radius: var(--radius-lg);
+    padding: 80px 32px;
+    text-align: center;
+  }
+  .empty-state .icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+  .empty-state h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .empty-state p {
+    color: var(--slate-500);
+    font-size: 14px;
+    max-width: 380px;
+    margin: 0 auto 24px;
+  }
+  .empty-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* SELECTED EMPLOYEE HEADER */
+  .emp-header-card .card-body {
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .emp-id {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .emp-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--slate-800), var(--slate-700));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    box-shadow: var(--shadow-sm);
+  }
+  .emp-id-text h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+  }
+  .emp-id-text .code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--slate-500);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .emp-header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* FORM */
   .form-section {
-    margin-bottom: 28px;
-    padding-bottom: 28px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
     border-bottom: 1px solid var(--slate-100);
   }
   .form-section:last-child {
@@ -150,310 +437,361 @@
     border-bottom: none;
   }
   .section-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--slate-500);
     font-weight: 800;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .field {
-    margin-bottom: 18px;
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 12px;
+    background: var(--mint);
+    border-radius: 2px;
   }
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .field-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .field { margin-bottom: 14px; }
   .field:last-child { margin-bottom: 0; }
   label {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--slate-700);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .field-hint {
-    font-size: 12px;
-    color: var(--slate-500);
-    margin-top: 6px;
-    line-height: 1.4;
-  }
-  input[type="number"], select {
+  input[type="number"], input[type="text"], select {
     width: 100%;
-    padding: 14px 16px;
+    padding: 11px 14px;
     border: 1px solid var(--slate-200);
     border-radius: var(--radius-md);
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
     color: var(--slate-900);
     background: var(--slate-50);
     transition: var(--transition);
   }
-  input[type="number"]:focus, select:focus {
+  input[type="text"] { font-family: inherit; }
+  input:focus, select:focus {
     outline: none;
-    border-color: var(--mint-ef);
+    border-color: var(--mint);
     background: white;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
 
+  /* TOGGLE */
   .toggle-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px;
+    padding: 14px 16px;
     background: var(--slate-50);
     border: 1px solid var(--slate-200);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: var(--transition);
   }
-  .toggle-row:hover { background: white; border-color: var(--slate-300); }
-  .toggle-row label { margin: 0; cursor: pointer; font-weight: 700; color: var(--slate-800); }
-  .toggle-desc { font-size: 12px; color: var(--slate-500); font-weight: 500; margin-top: 4px; }
-
-  /* TOGGLE PILL */
-  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 24px; transition: var(--transition); cursor: pointer; }
-  .slider::before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: var(--transition); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  .switch input:checked + .slider { background: var(--mint-ef); }
-  .switch input:checked + .slider::before { transform: translateX(20px); }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  .calc-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--slate-900), var(--slate-800));
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 15px;
+  .toggle-row:hover { background: white; }
+  .toggle-row .lbl {
     font-weight: 700;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 6px rgba(15, 23, 42, 0.2);
+    color: var(--slate-800);
+    font-size: 13px;
   }
-  .calc-btn:hover { background: var(--slate-900); transform: translateY(-2px); box-shadow: 0 8px 12px rgba(15, 23, 42, 0.3); }
-  .calc-btn:active { transform: translateY(0); }
+  .toggle-row .desc {
+    font-size: 11px;
+    color: var(--slate-500);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--slate-300);
+    border-radius: 22px;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .slider { background: var(--mint); }
+  .switch input:checked + .slider::before { transform: translateX(18px); }
+
+  /* ADJUSTMENTS */
+  .adj-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .adj-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-100);
+  }
+  .adj-month-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--slate-600);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .adj-row select, .adj-row input {
+    padding: 7px 8px;
+    font-size: 11px;
+    background: white;
+    border-radius: 6px;
+  }
+
+  /* CALCULATE BUTTON BAR */
+  .calc-bar {
+    background: var(--slate-50);
+    border-top: 1px solid var(--slate-100);
+    padding: 16px 28px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
 
   /* RESULTS */
-  .results-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 24px;
-    text-align: center;
-    color: var(--slate-500);
-  }
-  .results-placeholder .big-icon { font-size: 48px; margin-bottom: 20px; opacity: 0.3; }
-  .results-placeholder p { font-size: 15px; font-weight: 500; line-height: 1.6; }
-
-  .result-section { display: none; }
-  .result-section.visible { display: block; animation: fadeIn 0.4s ease-out forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .summary-grid {
+  .results-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
   }
-  .stat-box {
+  .result-tile {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-100);
     border-radius: var(--radius-md);
-    padding: 20px;
-    border: 1px solid var(--slate-200);
-    background: white;
-    transition: var(--transition);
+    padding: 16px 18px;
   }
-  .stat-box:hover { border-color: var(--slate-300); }
-  .stat-box.highlight-net {
+  .result-tile.primary {
     background: linear-gradient(135deg, var(--slate-900), var(--slate-800));
-    border: none;
     color: white;
-    grid-column: span 2;
-    box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.2);
+    border-color: var(--slate-900);
   }
-  .stat-box.highlight-tax {
-    background: var(--rose-pale);
-    border-color: rgba(244, 63, 94, 0.2);
+  .result-tile.primary .tile-label { color: var(--slate-300); }
+  .result-tile.accent {
+    background: var(--mint-pale);
+    border-color: rgba(16,185,129,0.2);
   }
-  .stat-label {
-    font-size: 11px;
+  .tile-label {
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--slate-500);
-    font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
-  .stat-box.highlight-net .stat-label { color: rgba(255, 255, 255, 0.7); }
-  .stat-value {
+  .tile-value {
     font-family: 'JetBrains Mono', monospace;
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: var(--slate-800);
+    line-height: 1.1;
   }
-  .stat-box.highlight-net .stat-value { font-size: 28px; color: var(--mint-ef); }
-  .stat-box.highlight-tax .stat-value { color: var(--rose); }
-  .stat-sub { font-size: 12px; margin-top: 6px; color: var(--slate-500); font-weight: 500; }
-  .stat-box.highlight-net .stat-sub { color: rgba(255, 255, 255, 0.6); }
-
-  /* RATE PROGRESS BAR */
-  .rate-bar-wrap {
-    margin-bottom: 32px;
-    padding: 20px;
-    background: var(--slate-50);
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius-md);
-  }
-  .rate-bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--slate-700);
-    margin-bottom: 12px;
-  }
-  .rate-bar-label span:last-child { color: var(--slate-900); font-weight: 800; }
-  .rate-bar { height: 8px; background: var(--slate-200); border-radius: 4px; overflow: hidden; }
-  .rate-bar-fill { height: 100%; background: linear-gradient(90deg, var(--mint-ef), var(--mint-dark)); width: 0%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-
-  /* TABLES */
-  .breakdown-title {
-    font-size: 14px;
-    color: var(--slate-800);
-    font-weight: 800;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .breakdown-title::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 16px;
-    background: var(--mint-ef);
-    border-radius: 2px;
-  }
-  .table-responsive {
-    overflow-x: auto;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--slate-200);
-    background: white;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th {
-    background: var(--slate-50);
-    color: var(--slate-700);
-    padding: 16px;
-    text-align: left;
-    font-weight: 700;
+  .tile-sub {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
+    color: var(--slate-500);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .result-tile.primary .tile-sub { color: var(--slate-400); }
+  .result-tile.accent .tile-value { color: var(--mint-dark); }
+
+  /* MONTHLY TABLE */
+  .ledger-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+  }
+  table.ledger {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  table.ledger th {
+    background: var(--slate-50);
+    padding: 10px 12px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    color: var(--slate-600);
     border-bottom: 1px solid var(--slate-200);
   }
-  th:last-child, td:last-child { text-align: right; }
-  td {
-    padding: 16px;
-    border-bottom: 1px solid var(--slate-100);
+  table.ledger th:first-child { text-align: left; }
+  table.ledger td {
+    padding: 9px 12px;
+    text-align: right;
     font-family: 'JetBrains Mono', monospace;
-    color: var(--slate-800);
-    transition: background-color 0.15s ease;
-  }
-  tbody tr:hover td { background-color: var(--slate-50); }
-  tr:last-child td { border-bottom: none; }
-  tfoot tr td { background: var(--slate-900); color: white; font-weight: 600; padding: 18px 16px; border-top: none; }
-  tfoot tr:hover td { background: var(--slate-900); }
-
-  /* SLAB REFERENCE DESIGN */
-  .slab-ref { grid-column: 1 / -1; margin-top: 16px; }
-  .slab-info-footer {
-    padding: 16px 24px;
-    font-size: 13px;
-    color: var(--slate-700);
-    background: var(--slate-50);
-    border-top: 1px solid var(--slate-200);
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  /* GLOBAL DISCLAIMER */
-  .disclaimer {
-    grid-column: 1 / -1;
-    text-align: center;
-    font-size: 13px;
-    color: var(--slate-500);
-    padding: 20px;
-    background: transparent;
-    border: 1px dashed var(--slate-300);
-    border-radius: var(--radius-md);
-    font-weight: 500;
-  }
-
-  /* ONE-TIME MONTHLY ADJUSTMENTS UI */
-  .adj-section-info {
     font-size: 12px;
-    color: var(--slate-500);
-    margin-bottom: 14px;
-    line-height: 1.6;
-    background: rgba(16,185,129,0.06);
-    border: 1px solid rgba(16,185,129,0.15);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
+    color: var(--slate-700);
+    border-bottom: 1px solid var(--slate-100);
   }
-  .adj-row {
+  table.ledger td:first-child {
+    text-align: left;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--slate-800);
+  }
+  table.ledger tbody tr:hover { background: var(--slate-50); }
+  table.ledger tfoot td {
+    background: var(--slate-900);
+    color: white;
+    font-weight: 700;
+    border-bottom: none;
+  }
+  table.ledger tfoot td:first-child {
+    color: white;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* SAVED BANNER */
+  .saved-banner {
+    background: var(--mint-pale);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: var(--mint-dark);
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: var(--slate-50);
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius-sm);
-    margin-bottom: 8px;
-    transition: var(--transition);
+    gap: 10px;
+    margin-bottom: 20px;
   }
-  .adj-row:hover { background: white; border-color: var(--slate-300); }
-  .adj-month-lbl {
-    width: 80px; font-size: 13px; font-weight: 700; color: var(--slate-700); flex-shrink: 0;
-  }
-  .adj-row .adj-type-sel {
-    width: 108px; flex-shrink: 0;
-    padding: 8px 10px; border: 1px solid var(--slate-200);
-    border-radius: var(--radius-sm); font-size: 12px;
-    font-weight: 700; background: white; color: var(--slate-900);
-    cursor: pointer; transition: var(--transition);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .adj-row .adj-type-sel:focus { outline: none; border-color: var(--mint-ef); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
-  .adj-row .adj-amount-inp {
-    flex: 1; min-width: 80px;
-    padding: 8px 10px; border: 1px solid var(--slate-200);
-    border-radius: var(--radius-sm); font-size: 13px;
+  .saved-banner .ts {
     font-family: 'JetBrains Mono', monospace;
-    background: white; color: var(--slate-900);
-    transition: var(--transition);
+    font-size: 11px;
+    color: var(--slate-600);
+    margin-left: auto;
+    font-weight: 500;
   }
-  .adj-row .adj-amount-inp:focus { outline: none; border-color: var(--mint-ef); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
 
-  @media (max-width: 968px) {
-    header { padding: 20px 24px; }
-    .app { grid-template-columns: 1fr; gap: 24px; padding: 24px 16px; }
-    .summary-grid { grid-template-columns: 1fr 1fr; }
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
   }
-  @media (max-width: 640px) {
-    .summary-grid { grid-template-columns: 1fr; }
-    .stat-box.highlight-net { grid-column: span 1; }
-    .adj-row { flex-wrap: wrap; }
-    .adj-row .adj-amount-inp { width: 100%; }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    max-width: 460px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 22px 26px 14px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .modal-header h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+  }
+  .modal-header p {
+    font-size: 13px;
+    color: var(--slate-500);
+    margin-top: 4px;
+  }
+  .modal-body { padding: 22px 26px; }
+  .modal-footer {
+    padding: 14px 26px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toast {
+    background: var(--slate-900);
+    color: white;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.25s ease;
+    max-width: 360px;
+  }
+  .toast.success { border-left: 3px solid var(--mint); }
+  .toast.error { border-left: 3px solid var(--rose); }
+  .toast.info { border-left: 3px solid var(--indigo); }
+  @keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 968px) {
+    .app {
+      grid-template-columns: 1fr;
+    }
+    .roster {
+      position: static;
+      max-height: 320px;
+    }
+    .field-grid, .field-grid.three { grid-template-columns: 1fr; }
+    .adj-grid { grid-template-columns: 1fr; }
+    header { padding: 16px 18px; }
   }
 </style>
 </head>
@@ -461,251 +799,123 @@
 
 <header>
   <div class="header-brand">
-    <div class="crescent">☪</div>
+    <div class="brand-mark">τ</div>
     <div class="brand-text">
-      <h1>Pakistan Tax Calculator</h1>
-      <p>Federal Board of Revenue · Salaried Individuals</p>
+      <h1>TaxRoster</h1>
+      <p>Employee Tax Management Module</p>
     </div>
   </div>
-  <div class="fy-badge">FY 2026–27</div>
+  <div class="header-actions">
+    <div class="fy-badge">FY 2026-27</div>
+    <button class="btn btn-ghost-dark" onclick="openImportDialog()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M12 3v13M7 9l5-6 5 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Import CSV
+    </button>
+    <button class="btn btn-ghost-dark" onclick="exportCSV()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M7 11l5 5 5-5M12 3v13" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Export CSV
+    </button>
+    <button class="btn btn-primary" onclick="openAddEmployee()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+      Add Employee
+    </button>
+  </div>
 </header>
 
 <div class="app">
-  <div class="card">
-    <div class="card-header">
-      <span class="icon">✏️</span>
-      <h2>Salary Information</h2>
-    </div>
-    <div class="card-body">
-
-      <div class="form-section">
-        <div class="section-label">Salary Mode</div>
-        <div class="field">
-          <label for="salaryType">Configuration Profile</label>
-          <select id="salaryType" onchange="toggleSalaryMode()">
-            <option value="fixed">Single Fixed Monthly Base</option>
-            <option value="increment">Salary with Mid-Year Adjustment</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <div class="section-label">Gross Earnings (PKR)</div>
-        <div id="fixedMode">
-          <div class="field">
-            <label for="grossSalary">Monthly Gross Base</label>
-            <input type="number" id="grossSalary" placeholder="e.g. 150000" min="0">
-            <div class="field-hint">Input your absolute basic base before monthly deductions.</div>
-          </div>
-        </div>
-
-        <div id="incrementMode" style="display:none;">
-          <div class="two-col">
-            <div class="field">
-              <label for="oldSalary">Pre-Adjustment Base</label>
-              <input type="number" id="oldSalary" placeholder="e.g. 120000" min="0">
-            </div>
-            <div class="field">
-              <label for="newSalary">Post-Adjustment Base</label>
-              <input type="number" id="newSalary" placeholder="e.g. 150000" min="0">
-            </div>
-          </div>
-          <div class="field" style="margin-top: 12px;">
-            <label for="incrementMonth">Adjustment Cycle Month</label>
-            <select id="incrementMonth">
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-            </select>
-            <div class="field-hint">July acts as the baseline step calculation point.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <div class="section-label">Exemptions & Allowances</div>
-        <div class="toggle-row" onclick="document.getElementById('medToggle').click()">
-          <div>
-            <label for="medToggle">Medical Allowance (10%)</label>
-            <div class="toggle-desc">Exempt under ITO Sec. 12 framework</div>
-          </div>
-          <label class="switch" onclick="event.stopPropagation()">
-            <input type="checkbox" id="medToggle" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div style="margin-top:20px;">
-          <div class="two-col">
-            <div class="field">
-              <label for="otherDeductions">Custom Adj. (Monthly)</label>
-              <input type="number" id="otherDeductions" placeholder="e.g. 5000" min="0" value="0" oninput="toggleOtherDedMonth()">
-            </div>
-            <div class="field" id="otherDedMonthField" style="opacity:0.4;pointer-events:none;">
-              <label for="otherDedMonth">Effective Start Month</label>
-              <select id="otherDedMonth">
-                <option value="7">July (Full Fiscal)</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-              </select>
-            </div>
-          </div>
-          <div class="field-hint" style="margin-top:-4px;">Provident funds or recognized dynamic exemptions.</div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <div class="section-label">One-Time Monthly Adjustments</div>
-        <div class="adj-section-info">
-          Add bonuses, arrears, or any non-recurring amounts received in a specific month. The tax impact recalculates from that month forward and spreads across remaining months of the fiscal year.
-        </div>
-        <div id="adjList"></div>
-      </div>
-
-      <button class="calc-btn" onclick="calculate()">
-        <span>⚡</span> Run Calculation Model
-      </button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="icon">📊</span>
-      <h2>Calculation Performance Matrix</h2>
-    </div>
-    <div class="card-body">
-
-      <div class="results-placeholder" id="placeholder">
-        <div class="big-icon">🧮</div>
-        <p>Awaiting parameters. Populate data configurations <br>and evaluate layout analysis models.</p>
-      </div>
-
-      <div class="result-section" id="resultSection">
-        <div class="summary-grid">
-          <div class="stat-box highlight-net">
-            <div class="stat-label">Net Projected Take-Home (Annual)</div>
-            <div class="stat-value" id="rNetAnnual">—</div>
-            <div class="stat-sub" id="rNetMonthlySub"></div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Taxable Base</div>
-            <div class="stat-value" id="rAnnualTaxable">—</div>
-            <div class="stat-sub" id="rAnnualTaxableSub"></div>
-          </div>
-          <div class="stat-box highlight-tax">
-            <div class="stat-label">Aggregated Tax liability</div>
-            <div class="stat-value" id="rAnnualTax">—</div>
-            <div class="stat-sub" id="rAnnualTaxSub"></div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Source Deduction (Monthly)</div>
-            <div class="stat-value" id="rMonthlyTax">—</div>
-            <div class="stat-sub">WHT Bracket Base</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">True Effective Rate</div>
-            <div class="stat-value" id="rEffRate">—</div>
-            <div class="stat-sub">Aggregate Matrix Proportion</div>
-          </div>
-        </div>
-
-        <div class="rate-bar-wrap">
-          <div class="rate-bar-label">
-            <span>Effective Overhead Ratio</span>
-            <span id="rBarLabel">0%</span>
-          </div>
-          <div class="rate-bar">
-            <div class="rate-bar-fill" id="rBarFill" style="width:0%"></div>
-          </div>
-        </div>
-
-        <div class="ledger-header-wrap" style="display: flex; justify-content: space-between; align-items: center; margin: 32px 0 16px;">
-          <div class="breakdown-title">Step-by-Step Calculations Ledger</div>
-          <button id="exportBtn" style="padding: 8px 16px; background: var(--slate-900); color: white; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 6px; transition: var(--transition);" onclick="exportLedger()">
-            <span>📥</span> Export CSV
-          </button>
-        </div>
-
-        <div class="table-responsive" style="margin-bottom: 32px;">
-          <table id="monthlyTable" style="min-width:760px;">
-            <thead>
-              <tr id="monthlyHead"></tr>
-            </thead>
-            <tbody id="monthlyRows"></tbody>
-            <tfoot id="monthlyFoot"></tfoot>
-          </table>
-        </div>
-
-        <div class="breakdown-title" style="margin: 32px 0 16px;">Income Progression Matrix</div>
-        <div class="table-responsive" style="margin-bottom: 8px;">
-          <table id="deductionTable">
-            <thead>
-              <tr><th>Evaluation Object</th><th style="text-align:right">Calculated Yield (PKR)</th></tr>
-            </thead>
-            <tbody id="deductionBody"></tbody>
-          </table>
-        </div>
-
+  <!-- ROSTER SIDEBAR -->
+  <aside class="roster">
+    <div class="roster-header">
+      <div class="roster-title">
+        <h2>Roster</h2>
+        <span class="roster-count" id="rosterCount">0</span>
       </div>
     </div>
-  </div>
-
-  <div class="card slab-ref">
-    <div class="card-header">
-      <span class="icon">📋</span>
-      <h2>Statutory FBR Income Brackets (Reference Matrix — FY 2026-27)</h2>
+    <div class="roster-search">
+      <input type="text" id="searchInput" placeholder="Search by name or code…" oninput="renderRoster()">
     </div>
-    <div class="card-body" style="padding: 0;">
-      <div class="table-responsive" style="border:none; border-radius:0;">
-        <table>
-          <thead>
-            <tr>
-              <th>Annual Income Range (PKR)</th>
-              <th>Marginal Rate</th>
-              <th style="text-align:right">Fixed Baseline Tax</th>
-              <th style="text-align:right">Calculation Rule</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Below 6,0,000</td><td>0%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">Rs. 0</td></tr>
-            <tr><td>6,00,000 – 1,200,000</td><td>1%</td><td style="text-align:right">Rs. 0</td><td style="text-align:right">1% of amount exceeding Rs. 600,000</td></tr>
-            <tr><td>1,200,000 – 2,200,000</td><td>11%</td><td style="text-align:right">Rs. 6,000</td><td style="text-align:right">Rs. 6,000 + 11% of amount exceeding Rs. 1,200,000</td></tr>
-            <tr><td>2,200,000 – 3,200,000</td><td>20%</td><td style="text-align:right">Rs. 116,000</td><td style="text-align:right">Rs. 116,000 + 20% of amount exceeding Rs. 2,200,000</td></tr>
-            <tr><td>3,200,000 – 4,100,000</td><td>25%</td><td style="text-align:right">Rs. 316,000</td><td style="text-align:right">Rs. 316,000 + 25% of amount exceeding Rs. 3,200,000</td></tr>
-            <tr><td>4,100,000 – 5,600,000</td><td>29%</td><td style="text-align:right">Rs. 541,000</td><td style="text-align:right">Rs. 541,000 + 29% of amount exceeding Rs. 4,100,000</td></tr>
-            <tr><td>5,600,000 – 7,00,000</td><td>32%</td><td style="text-align:right">Rs. 976,000</td><td style="text-align:right">Rs. 976,000 + 32% of amount exceeding Rs. 5,600,000</td></tr>
-            <tr><td>Above 7,000,000</td><td>35%</td><td style="text-align:right">Rs. 1,424,000</td><td style="text-align:right">Rs. 1,424,000 + 35% of amount exceeding Rs. 7,000,000</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="slab-info-footer">
-        ℹ️ Slabs updated strictly in alignment with Federal Budget 2026-27 statutory layout definitions.
+    <div class="roster-list" id="rosterList"></div>
+  </aside>
+
+  <!-- WORKSPACE -->
+  <main class="workspace" id="workspace">
+    <!-- Empty state by default -->
+    <div class="empty-state" id="emptyState">
+      <div class="icon-wrap">📋</div>
+      <h2>No employee selected</h2>
+      <p>Add an employee, import an existing roster from CSV, or pick someone from the list to begin calculating tax.</p>
+      <div class="empty-actions">
+        <button class="btn btn-lg btn-primary" onclick="openAddEmployee()">Add Employee</button>
+        <button class="btn btn-lg btn-secondary" onclick="openImportDialog()">Import CSV</button>
       </div>
     </div>
-  </div>
+  </main>
+</div>
 
-  <div class="disclaimer">
-    <strong>Regulatory Disclaimer:</strong> Data configurations reflect limits stated under Finance Act directives. Cross-verify operational assessments inside production parameters via official structures at iris.fbr.gov.pk.
+<!-- ADD EMPLOYEE MODAL -->
+<div class="modal-backdrop" id="addEmployeeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New employee</h3>
+      <p>Create a profile to bind tax calculations to.</p>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="newEmpName">Employee Name</label>
+        <input type="text" id="newEmpName" placeholder="e.g. Ali Khan" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="newEmpCode">Employee Code</label>
+        <input type="text" id="newEmpCode" placeholder="e.g. EMP-0001" autocomplete="off" style="text-transform:uppercase;">
+        <div style="font-size:11px;color:var(--slate-500);margin-top:6px;font-family:'JetBrains Mono',monospace;">Must be unique across the roster.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addEmployeeModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddEmployee()">Create profile</button>
+    </div>
   </div>
 </div>
 
+<!-- IMPORT CONFIRMATION MODAL -->
+<div class="modal-backdrop" id="importModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Import roster from CSV</h3>
+      <p id="importDesc">Select a previously exported file.</p>
+    </div>
+    <div class="modal-body">
+      <input type="file" id="importFileInput" accept=".csv" style="width:100%;font-size:13px;padding:10px;border:1px dashed var(--slate-300);border-radius:var(--radius-md);background:var(--slate-50);cursor:pointer;">
+      <div id="importPreview" style="margin-top:14px;font-size:12px;color:var(--slate-600);font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
+      <button class="btn btn-primary" id="importConfirmBtn" onclick="confirmImport()" disabled>Replace roster</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Delete employee</h3>
+      <p id="deleteDesc">This will permanently remove the profile and its tax record.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
 <script>
+/* ════════════════════════════════════════════════════════════════
+   CONSTANTS — Pakistan FY 2026-27 tax slabs (ported from source)
+   ════════════════════════════════════════════════════════════════ */
 const TAX_SLABS = [
   { min: 0,         max: 600000,    rate: 0.00,  fixed: 0 },
   { min: 600000,    max: 1200000,   rate: 0.01,  fixed: 0 },
@@ -719,55 +929,452 @@ const TAX_SLABS = [
 
 const MONTHS = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
 const FULL_MONTHS = ['July','August','September','October','November','December','January','February','March','April','May','June'];
+const TAX_YEAR = 'FY 2026-27';
+const STORAGE_KEY = 'taxroster:v1';
 
-function initAdjustments() {
+/* ════════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════════ */
+let state = {
+  employees: [],          // { code, name, taxRecord }
+  selectedCode: null,
+};
+
+let pendingImportData = null;   // parsed employee list awaiting confirmation
+let pendingDeleteCode = null;
+
+/* ════════════════════════════════════════════════════════════════
+   PERSISTENCE — window.storage with graceful fallback
+   ════════════════════════════════════════════════════════════════ */
+async function loadState() {
+  try {
+    if (window.storage && typeof window.storage.get === 'function') {
+      const r = await window.storage.get(STORAGE_KEY);
+      if (r && r.value) {
+        const parsed = JSON.parse(r.value);
+        if (parsed && Array.isArray(parsed.employees)) {
+          state.employees = parsed.employees;
+        }
+      }
+    }
+  } catch (e) {
+    // Key doesn't exist or storage unavailable — start fresh
+  }
+}
+
+async function saveState() {
+  try {
+    if (window.storage && typeof window.storage.set === 'function') {
+      await window.storage.set(STORAGE_KEY, JSON.stringify({ employees: state.employees }));
+    }
+  } catch (e) {
+    console.warn('Persistence failed:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UTILITIES
+   ════════════════════════════════════════════════════════════════ */
+function fmt(n) {
+  return 'PKR ' + Math.round(n).toLocaleString('en-PK');
+}
+function fmtShort(n) {
+  if (n >= 10000000) return (n / 10000000).toFixed(2) + ' Cr';
+  if (n >= 100000)   return (n / 100000).toFixed(2) + ' Lac';
+  return Math.round(n).toLocaleString('en-PK');
+}
+function initials(name) {
+  return name.trim().split(/\s+/).slice(0, 2).map(s => s[0]).join('').toUpperCase();
+}
+function nowISO() { return new Date().toISOString(); }
+function fmtTimestamp(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
+  } catch { return iso; }
+}
+
+function toast(message, kind) {
+  kind = kind || 'info';
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind;
+  t.textContent = message;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => {
+    t.style.transition = 'opacity 0.2s';
+    t.style.opacity = '0';
+    setTimeout(() => t.remove(), 200);
+  }, 2800);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BASE64 (UTF-8 safe) — for round-trippable inputs blob in CSV
+   ════════════════════════════════════════════════════════════════ */
+function b64encodeUtf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+function b64decodeUtf8(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TAX ENGINE — direct port of the source calculator
+   ════════════════════════════════════════════════════════════════ */
+function computeTax(annualIncome) {
+  for (let i = TAX_SLABS.length - 1; i >= 0; i--) {
+    if (annualIncome > TAX_SLABS[i].min) {
+      const marginal = (annualIncome - TAX_SLABS[i].min) * TAX_SLABS[i].rate;
+      return Math.max(0, Math.round(TAX_SLABS[i].fixed + marginal));
+    }
+  }
+  return 0;
+}
+
+function runTaxCalculation(inputs) {
+  const { mode, grossSalary, oldSalary, newSalary, incrementMonth,
+          medToggle, otherDeductions, otherDedMonth, adjustments } = inputs;
+
+  let monthSalaries = [];
+  if (mode === 'fixed') {
+    for (let i = 0; i < 12; i++) monthSalaries.push(grossSalary || 0);
+  } else {
+    const incFiscalIdx = incrementMonth >= 7 ? incrementMonth - 7 : incrementMonth + 5;
+    for (let i = 0; i < 12; i++) {
+      monthSalaries.push(i >= incFiscalIdx ? (newSalary || 0) : (oldSalary || 0));
+    }
+  }
+
+  const otherDedFiscalIdx = otherDedMonth >= 7 ? otherDedMonth - 7 : otherDedMonth + 5;
+  const otherDed = otherDeductions || 0;
+
+  const monthAdjSign = new Array(12).fill(0);
+  (adjustments || []).forEach(a => {
+    if (a.amount > 0) monthAdjSign[a.fiscalIdx] += a.isIncome ? a.amount : -a.amount;
+  });
+
+  const monthOtherDed = [];
+  const monthRegularTaxable = monthSalaries.map((gross, i) => {
+    let ded = 0;
+    if (medToggle) ded += gross * 0.10;
+    const od = (i >= otherDedFiscalIdx) ? otherDed : 0;
+    monthOtherDed.push(od);
+    ded += od;
+    return Math.max(0, gross - ded);
+  });
+
+  const monthTaxable = monthRegularTaxable.map((reg, i) => Math.max(0, reg + monthAdjSign[i]));
+
+  const annualGross    = monthSalaries.reduce((a, b) => a + b, 0);
+  const annualIncAdj   = (adjustments || []).filter(a => a.isIncome).reduce((s, a) => s + a.amount, 0);
+  const annualTaxable  = monthTaxable.reduce((a, b) => a + b, 0);
+  const annualTotalIncome = annualGross + annualIncAdj;
+
+  // Real-payroll projection
+  const monthTaxes = [];
+  let ytdTax = 0, ytdTaxable = 0;
+  for (let i = 0; i < 12; i++) {
+    const curTaxable = monthTaxable[i];
+    let futureRegular = 0;
+    for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[j];
+    const projAnnualTaxable = Math.max(0, ytdTaxable + curTaxable + futureRegular);
+    const projAnnualTax     = computeTax(projAnnualTaxable);
+    const remainingTax      = projAnnualTax - ytdTax;
+    const remainingMonths   = 12 - i;
+    const cur = Math.max(0, Math.round(remainingTax / remainingMonths));
+    monthTaxes.push(cur);
+    ytdTax     += cur;
+    ytdTaxable += curTaxable;
+  }
+
+  const annualTax    = ytdTax;
+  const annualNetPay = annualTotalIncome - annualTax;
+  const effRate      = annualTotalIncome > 0 ? (annualTax / annualTotalIncome * 100) : 0;
+
+  return {
+    monthSalaries, monthAdjSign, monthOtherDed, monthTaxable, monthTaxes,
+    annualGross, annualIncAdj, annualTaxable, annualTotalIncome,
+    annualTax, annualNetPay, effRate,
+    avgMonthlyTax: annualTax / 12,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ROSTER RENDERING
+   ════════════════════════════════════════════════════════════════ */
+function renderRoster() {
+  const list = document.getElementById('rosterList');
+  const search = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+  const filtered = state.employees.filter(e =>
+    !search || e.name.toLowerCase().includes(search) || e.code.toLowerCase().includes(search)
+  );
+
+  document.getElementById('rosterCount').textContent = state.employees.length;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="roster-empty">
+        <span class="emoji">${state.employees.length === 0 ? '👥' : '🔍'}</span>
+        ${state.employees.length === 0
+          ? 'No employees yet.<br>Add or import to begin.'
+          : 'No matches for that search.'}
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => {
+    const hasTax = !!e.taxRecord;
+    const isSel  = e.code === state.selectedCode;
+    return `
+      <div class="emp-card ${isSel ? 'selected' : ''}" onclick="selectEmployee('${e.code.replace(/'/g, "\\'")}')">
+        <div class="emp-name">${escapeHtml(e.name)}</div>
+        <div class="emp-code">${escapeHtml(e.code)}</div>
+        <div class="status-pill ${hasTax ? 'status-computed' : 'status-pending'}">${hasTax ? 'Computed' : 'Pending'}</div>
+      </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   WORKSPACE RENDERING
+   ════════════════════════════════════════════════════════════════ */
+function renderWorkspace() {
+  const ws = document.getElementById('workspace');
+  if (!state.selectedCode) {
+    ws.innerHTML = `
+      <div class="empty-state">
+        <div class="icon-wrap">📋</div>
+        <h2>No employee selected</h2>
+        <p>Add an employee, import an existing roster from CSV, or pick someone from the list to begin calculating tax.</p>
+        <div class="empty-actions">
+          <button class="btn btn-lg btn-primary" onclick="openAddEmployee()">Add Employee</button>
+          <button class="btn btn-lg btn-secondary" onclick="openImportDialog()">Import CSV</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const emp = state.employees.find(e => e.code === state.selectedCode);
+  if (!emp) {
+    state.selectedCode = null;
+    renderWorkspace();
+    return;
+  }
+
+  const hasRecord = !!emp.taxRecord;
+  const inputs = emp.taxRecord ? emp.taxRecord.inputs : defaultInputs();
+
+  // Header card
+  let html = `
+    <div class="card emp-header-card">
+      <div class="card-body">
+        <div class="emp-id">
+          <div class="emp-avatar">${initials(emp.name)}</div>
+          <div class="emp-id-text">
+            <h2>${escapeHtml(emp.name)}</h2>
+            <div class="code">${escapeHtml(emp.code)} · ${TAX_YEAR}</div>
+          </div>
+        </div>
+        <div class="emp-header-actions">
+          <button class="btn btn-danger" onclick="openDeleteEmployee()">Delete</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Saved banner
+  if (hasRecord) {
+    html += `
+      <div class="saved-banner">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Tax record bound to this profile.
+        <span class="ts">Calculated ${fmtTimestamp(emp.taxRecord.calculatedAt)}</span>
+      </div>`;
+  }
+
+  // Calculator card
+  html += `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">
+          <h3>${hasRecord ? 'Recalculate tax' : 'Calculate tax'}</h3>
+          <p>${TAX_YEAR} · slab-based projection</p>
+        </div>
+      </div>
+      <div class="card-body">
+        ${renderCalcForm(inputs)}
+      </div>
+      <div class="calc-bar">
+        <button class="btn btn-secondary" onclick="resetCalcForm()">Reset form</button>
+        <button class="btn btn-primary btn-lg" onclick="calculateAndSave()">
+          <svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Calculate &amp; save to profile
+        </button>
+      </div>
+    </div>
+    <div id="resultsContainer"></div>
+  `;
+
+  ws.innerHTML = html;
+
+  // Render results if they exist
+  if (hasRecord) renderResults(emp.taxRecord.results);
+  // Wire up dynamic form
+  initAdjustmentRows(inputs.adjustments || []);
+  toggleSalaryMode();
+  toggleOtherDedMonth();
+}
+
+function defaultInputs() {
+  return {
+    mode: 'fixed',
+    grossSalary: '',
+    oldSalary: '',
+    newSalary: '',
+    incrementMonth: 7,
+    medToggle: false,
+    otherDeductions: '',
+    otherDedMonth: 7,
+    adjustments: [],
+  };
+}
+
+function renderCalcForm(inputs) {
+  return `
+    <div class="form-section">
+      <div class="section-label">Salary structure</div>
+      <div class="field">
+        <label for="salaryType">Pay structure</label>
+        <select id="salaryType" onchange="toggleSalaryMode()">
+          <option value="fixed"${inputs.mode === 'fixed' ? ' selected' : ''}>Fixed monthly salary</option>
+          <option value="increment"${inputs.mode === 'increment' ? ' selected' : ''}>Salary increment mid-year</option>
+        </select>
+      </div>
+
+      <div id="fixedMode">
+        <div class="field">
+          <label for="grossSalary">Monthly gross salary (PKR)</label>
+          <input type="number" id="grossSalary" placeholder="e.g. 150000" value="${inputs.grossSalary || ''}">
+        </div>
+      </div>
+
+      <div id="incrementMode" style="display:none;">
+        <div class="field-grid">
+          <div class="field">
+            <label for="oldSalary">Old salary (PKR)</label>
+            <input type="number" id="oldSalary" placeholder="e.g. 120000" value="${inputs.oldSalary || ''}">
+          </div>
+          <div class="field">
+            <label for="newSalary">New salary (PKR)</label>
+            <input type="number" id="newSalary" placeholder="e.g. 150000" value="${inputs.newSalary || ''}">
+          </div>
+        </div>
+        <div class="field">
+          <label for="incrementMonth">Increment effective from</label>
+          <select id="incrementMonth">
+            ${monthOptions(inputs.incrementMonth || 7)}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-label">Deductions</div>
+      <div class="field">
+        <label class="switch-wrap">
+          <div class="toggle-row">
+            <div>
+              <div class="lbl">Medical exemption (10%)</div>
+              <div class="desc">Apply ITO Sec 12 baseline medical exemption.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="medToggle" ${inputs.medToggle ? 'checked' : ''}>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </label>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="otherDeductions">Other monthly deduction (PKR)</label>
+          <input type="number" id="otherDeductions" placeholder="0" value="${inputs.otherDeductions || ''}" oninput="toggleOtherDedMonth()">
+        </div>
+        <div class="field" id="otherDedMonthField" style="opacity:0.4;pointer-events:none;">
+          <label for="otherDedMonth">Effective from</label>
+          <select id="otherDedMonth">
+            ${monthOptions(inputs.otherDedMonth || 7)}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-label">One-time monthly adjustments</div>
+      <div style="font-size:11px;color:var(--slate-500);margin-bottom:12px;font-family:'JetBrains Mono',monospace;">Bonuses, arrears, or one-time deductions per month. Leave blank to skip.</div>
+      <div class="adj-grid" id="adjList"></div>
+    </div>
+  `;
+}
+
+function monthOptions(selected) {
+  const months = [
+    { v: 7, n: 'July (Month 1)' }, { v: 8, n: 'August (Month 2)' },
+    { v: 9, n: 'September (Month 3)' }, { v: 10, n: 'October (Month 4)' },
+    { v: 11, n: 'November (Month 5)' }, { v: 12, n: 'December (Month 6)' },
+    { v: 1, n: 'January (Month 7)' }, { v: 2, n: 'February (Month 8)' },
+    { v: 3, n: 'March (Month 9)' }, { v: 4, n: 'April (Month 10)' },
+    { v: 5, n: 'May (Month 11)' }, { v: 6, n: 'June (Month 12)' },
+  ];
+  return months.map(m => `<option value="${m.v}"${m.v === selected ? ' selected' : ''}>${m.n}</option>`).join('');
+}
+
+function initAdjustmentRows(existing) {
   const container = document.getElementById('adjList');
+  if (!container) return;
   container.innerHTML = '';
+  const byIdx = {};
+  (existing || []).forEach(a => { byIdx[a.fiscalIdx] = a; });
+
   FULL_MONTHS.forEach((mon, idx) => {
+    const a = byIdx[idx];
     const div = document.createElement('div');
     div.className = 'adj-row';
     div.dataset.monthIdx = idx;
     div.innerHTML = `
-      <div class="adj-month-lbl">${mon}</div>
-      <select class="adj-type-sel" title="Adjustment type">
-        <option value="add">＋ Income</option>
-        <option value="sub">− Deduction</option>
+      <div class="adj-month-lbl">${mon.slice(0, 3)}</div>
+      <select class="adj-type-sel">
+        <option value="add"${(!a || a.isIncome) ? ' selected' : ''}>＋ Income</option>
+        <option value="sub"${(a && !a.isIncome) ? ' selected' : ''}>− Deduction</option>
       </select>
-      <input type="number" class="adj-amount-inp" placeholder="0" min="0" title="Amount">
+      <input type="number" class="adj-amount-inp" placeholder="0" min="0" value="${a ? a.amount : ''}">
     `;
     container.appendChild(div);
   });
 }
 
 function toggleSalaryMode() {
-  const mode = document.getElementById('salaryType').value;
+  const sel = document.getElementById('salaryType');
+  if (!sel) return;
+  const mode = sel.value;
   document.getElementById('fixedMode').style.display = mode === 'fixed' ? 'block' : 'none';
   document.getElementById('incrementMode').style.display = mode === 'increment' ? 'block' : 'none';
 }
 
-function computeTax(annualIncome) {
-  for (let i = TAX_SLABS.length - 1; i >= 0; i--) {
-    if (annualIncome > TAX_SLABS[i].min) {
-      const marginal = (annualIncome - TAX_SLABS[i].min) * TAX_SLABS[i].rate;
-      let tax = TAX_SLABS[i].fixed + marginal;
-      return Math.max(0, Math.round(tax));
-    }
-  }
-  return 0;
-}
-
-function fmt(n) {
-  return 'PKR ' + Math.round(n).toLocaleString('en-PK');
-}
-function fmtShort(n) {
-  if (n >= 10000000) return (n / 10000000).toFixed(2) + ' Cr';
-  if (n >= 100000) return (n / 100000).toFixed(2) + ' Lac';
-  return Math.round(n).toLocaleString('en-PK');
-}
-
 function toggleOtherDedMonth() {
-  const val = parseFloat(document.getElementById('otherDeductions').value) || 0;
+  const inp = document.getElementById('otherDeductions');
   const field = document.getElementById('otherDedMonthField');
+  if (!inp || !field) return;
+  const val = parseFloat(inp.value) || 0;
   if (val > 0) {
     field.style.opacity = '1';
     field.style.pointerEvents = 'auto';
@@ -777,271 +1384,579 @@ function toggleOtherDedMonth() {
   }
 }
 
-function getAdjustments() {
-  const rows = document.querySelectorAll('#adjList .adj-row');
-  const list = [];
-  rows.forEach(row => {
-    const isIncome = row.querySelector('.adj-type-sel').value === 'add';
-    const fiscalIdx = parseInt(row.dataset.monthIdx);
-    const amount = parseFloat(row.querySelector('.adj-amount-inp').value) || 0;
-    if (amount > 0) list.push({ fiscalIdx, amount, isIncome });
-  });
-  return list;
+function resetCalcForm() {
+  const emp = state.employees.find(e => e.code === state.selectedCode);
+  if (!emp) return;
+  emp.taxRecord = null;
+  saveState();
+  renderRoster();
+  renderWorkspace();
+  toast('Form reset', 'info');
 }
 
-function calculate() {
+/* ════════════════════════════════════════════════════════════════
+   READ FORM, CALCULATE, BIND TO PROFILE
+   ════════════════════════════════════════════════════════════════ */
+function readFormInputs() {
   const mode = document.getElementById('salaryType').value;
-  const medToggle = document.getElementById('medToggle').checked;
-  const otherDed = parseFloat(document.getElementById('otherDeductions').value) || 0;
-  const otherDedStartMonth = parseInt(document.getElementById('otherDedMonth').value);
-  const otherDedFiscalIdx = otherDedStartMonth >= 7 ? otherDedStartMonth - 7 : otherDedStartMonth + 5;
+  const inputs = {
+    mode,
+    grossSalary: parseFloat(document.getElementById('grossSalary').value) || 0,
+    oldSalary: parseFloat(document.getElementById('oldSalary').value) || 0,
+    newSalary: parseFloat(document.getElementById('newSalary').value) || 0,
+    incrementMonth: parseInt(document.getElementById('incrementMonth').value),
+    medToggle: document.getElementById('medToggle').checked,
+    otherDeductions: parseFloat(document.getElementById('otherDeductions').value) || 0,
+    otherDedMonth: parseInt(document.getElementById('otherDedMonth').value),
+    adjustments: [],
+  };
 
-  let monthSalaries = [];
+  document.querySelectorAll('#adjList .adj-row').forEach(row => {
+    const fiscalIdx = parseInt(row.dataset.monthIdx);
+    const amount    = parseFloat(row.querySelector('.adj-amount-inp').value) || 0;
+    const isIncome  = row.querySelector('.adj-type-sel').value === 'add';
+    if (amount > 0) inputs.adjustments.push({ fiscalIdx, amount, isIncome });
+  });
 
-  if (mode === 'fixed') {
-    const gross = parseFloat(document.getElementById('grossSalary').value);
-    if (!gross || gross <= 0) { alert('Please enter a valid monthly salary.'); return; }
-    for (let i = 0; i < 12; i++) monthSalaries.push(gross);
-  } else {
-    const oldS = parseFloat(document.getElementById('oldSalary').value);
-    const newS = parseFloat(document.getElementById('newSalary').value);
-    const incMonth = parseInt(document.getElementById('incrementMonth').value);
-    if (!oldS || !newS || oldS <= 0 || newS <= 0) { alert('Please enter both old and new salary.'); return; }
-    for (let i = 0; i < 12; i++) {
-      const incFiscalIdx = incMonth >= 7 ? incMonth - 7 : incMonth + 5;
-      monthSalaries.push(i >= incFiscalIdx ? newS : oldS);
-    }
+  return inputs;
+}
+
+async function calculateAndSave() {
+  const emp = state.employees.find(e => e.code === state.selectedCode);
+  if (!emp) return;
+
+  const inputs = readFormInputs();
+
+  if (inputs.mode === 'fixed' && inputs.grossSalary <= 0) {
+    toast('Enter a valid monthly salary.', 'error'); return;
+  }
+  if (inputs.mode === 'increment' && (inputs.oldSalary <= 0 || inputs.newSalary <= 0)) {
+    toast('Enter both old and new salary.', 'error'); return;
   }
 
-  /* ── One-time adjustments ── */
-  const adjustments   = getAdjustments();
-  const monthAdjSign  = new Array(12).fill(0); // net signed value per month
-  adjustments.forEach(({ fiscalIdx, amount, isIncome }) => {
-    monthAdjSign[fiscalIdx] += isIncome ? amount : -amount;
-  });
-  const hasAdj = adjustments.length > 0;
+  const results = runTaxCalculation(inputs);
 
-  /* ── Build taxable arrays ── */
-  let monthOtherDed      = [];
-  let monthRegularTaxable = monthSalaries.map((gross, i) => {
-    let ded = 0;
-    if (medToggle) ded += gross * 0.10;
-    const od = (i >= otherDedFiscalIdx) ? otherDed : 0;
-    monthOtherDed.push(od);
-    ded += od;
-    return Math.max(0, gross - ded);
-  });
+  emp.taxRecord = {
+    taxYear: TAX_YEAR,
+    annualGross:   results.annualGross,
+    annualTaxable: results.annualTaxable,
+    annualTax:     results.annualTax,
+    annualNetPay:  results.annualNetPay,
+    effectiveRate: parseFloat(results.effRate.toFixed(2)),
+    calculatedAt:  nowISO(),
+    inputs,
+    results: {
+      monthTaxes: results.monthTaxes,
+      monthTaxable: results.monthTaxable,
+      monthSalaries: results.monthSalaries,
+      monthAdjSign: results.monthAdjSign,
+      monthOtherDed: results.monthOtherDed,
+      annualIncAdj: results.annualIncAdj,
+      annualTotalIncome: results.annualTotalIncome,
+      avgMonthlyTax: results.avgMonthlyTax,
+    },
+  };
 
-  // Full taxable = regular base ± one-time adjustment
-  let monthTaxable = monthRegularTaxable.map((reg, i) => Math.max(0, reg + monthAdjSign[i]));
+  await saveState();
+  renderRoster();
+  renderWorkspace();
+  toast('Tax record saved to ' + emp.name, 'success');
 
-  /* ── Annual totals ── */
-  const annualGross       = monthSalaries.reduce((a, b) => a + b, 0);
-  const annualIncAdj      = adjustments.filter(a => a.isIncome).reduce((s, a) => s + a.amount, 0);
-  const annualTaxable     = monthTaxable.reduce((a, b) => a + b, 0);
-  const annualMedDed      = medToggle ? monthSalaries.reduce((a, b) => a + b * 0.10, 0) : 0;
-  const annualOtherDed    = monthOtherDed.reduce((a, b) => a + b, 0);
-  const annualTotalIncome = annualGross + annualIncAdj; // actual money received
+  // Scroll to results
+  setTimeout(() => {
+    const r = document.getElementById('resultsContainer');
+    if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
 
-  /* ── Tax calculation: real-payroll projection ── */
-  let monthTaxes = [];
-  let ytdTax     = 0;
-  let ytdTaxable = 0;
+/* ════════════════════════════════════════════════════════════════
+   MONTHLY LEDGER — conditional columns (One-Time Adj / Medical / Other / On Account)
+   ════════════════════════════════════════════════════════════════ */
+function renderMonthlyLedger(r, tr) {
+  const inputs    = tr.inputs || {};
+  const medToggle = !!inputs.medToggle;
+  const hasAdj    = r.monthAdjSign.some(v => v !== 0);
+  const hasOther  = r.monthOtherDed.some(v => v > 0);
 
-  for (let i = 0; i < 12; i++) {
-    const curTaxable = monthTaxable[i];
+  // Per-month derived series
+  const monthMed     = r.monthSalaries.map(g => medToggle ? Math.round(g * 0.10) : 0);
+  const monthNet     = r.monthSalaries.map((g, i) => g + Math.max(0, r.monthAdjSign[i]) - r.monthTaxes[i]);
+  const monthOnAcct  = monthNet.map((n, i) => n - r.monthOtherDed[i]);
 
-    // Sum future REGULAR taxable only (no future one-time adjustments)
-    let futureRegular = 0;
-    for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[j];
+  // Annual totals
+  const totGross    = r.monthSalaries.reduce((a, b) => a + b, 0);
+  const totAdj      = r.monthAdjSign.reduce((a, b) => a + b, 0);
+  const totMed      = monthMed.reduce((a, b) => a + b, 0);
+  const totOther    = r.monthOtherDed.reduce((a, b) => a + b, 0);
+  const totTaxable  = r.monthTaxable.reduce((a, b) => a + b, 0);
+  const totTax      = r.monthTaxes.reduce((a, b) => a + b, 0);
+  const totNet      = monthNet.reduce((a, b) => a + b, 0);
+  const totOnAcct   = monthOnAcct.reduce((a, b) => a + b, 0);
 
-    const projAnnualTaxable = Math.max(0, ytdTaxable + curTaxable + futureRegular);
-    const projAnnualTax     = computeTax(projAnnualTaxable);
-    const remainingTax      = projAnnualTax - ytdTax;
-    const remainingMonths   = 12 - i;
-    const curMonthTax       = Math.max(0, Math.round(remainingTax / remainingMonths));
+  // Build header
+  const headers = ['Period', 'Gross'];
+  if (hasAdj)   headers.push('One-time adj.');
+  if (medToggle) headers.push('Medical ded.');
+  if (hasOther) headers.push('Other adj.');
+  headers.push('Taxable', 'Tax withheld', 'Net pay', 'On account');
 
-    monthTaxes.push(curMonthTax);
-    ytdTax     += curMonthTax;
-    ytdTaxable += curTaxable;
-  }
+  const headerCells = headers.map((h, i) =>
+    `<th style="${i > 0 ? 'text-align:right' : ''}">${h}</th>`
+  ).join('');
 
-  const annualTax    = ytdTax;
-  const avgMonthlyTax = annualTax / 12;
-  const annualNetPay  = annualTotalIncome - annualTax;
-  const effRate       = annualTotalIncome > 0 ? (annualTax / annualTotalIncome * 100) : 0;
-
-  /* ── Show results ── */
-  document.getElementById('placeholder').style.display = 'none';
-  document.getElementById('resultSection').style.display = 'block';
-  document.getElementById('resultSection').classList.add('visible');
-  document.getElementById('exportBtn').style.display = 'flex';
-
-  document.getElementById('rAnnualTaxable').textContent = fmtShort(annualTaxable);
-  document.getElementById('rAnnualTaxableSub').textContent = 'Total Income: ' + fmtShort(annualTotalIncome);
-  document.getElementById('rAnnualTax').textContent = fmtShort(annualTax);
-  document.getElementById('rAnnualTaxSub').textContent = 'Monthly split: ' + fmt(avgMonthlyTax);
-  document.getElementById('rMonthlyTax').textContent = fmt(avgMonthlyTax);
-  document.getElementById('rEffRate').textContent = effRate.toFixed(2) + '%';
-  document.getElementById('rNetAnnual').textContent = fmtShort(annualNetPay);
-  document.getElementById('rNetMonthlySub').textContent = 'Monthly Yield: ' + fmt(annualNetPay / 12);
-
-  const barPct = Math.min(effRate * 2.5, 100);
-  document.getElementById('rBarFill').style.width = barPct + '%';
-  document.getElementById('rBarLabel').textContent = effRate.toFixed(2) + '%';
-
-  /* ── Income Progression Matrix ── */
-  const dBody = document.getElementById('deductionBody');
-  dBody.innerHTML = '';
-  const adjDeductionTotal = adjustments.filter(a => !a.isIncome).reduce((s, a) => s + a.amount, 0);
-  const deductRows = [
-    ['Annual Gross Salary', annualGross, ''],
-    annualIncAdj > 0 ? ['One-Time Income Events', annualIncAdj, 'Bonuses / Arrears / Non-Recurring'] : null,
-    medToggle ? ['Exempt Baseline Medical (10%)', -annualMedDed, 'ITO Sec 12 Exemption Framework'] : null,
-    annualOtherDed > 0 ? ['Custom Recurring Adjustments', -annualOtherDed, `PKR ${otherDed.toLocaleString('en-PK')}/mo × ${12 - otherDedFiscalIdx} cycle steps`] : null,
-    adjDeductionTotal > 0 ? ['One-Time Tax Deductions', -adjDeductionTotal, 'Non-recurring tax-exempt amounts'] : null,
-    ['Annual Net Taxable Target', annualTaxable, ''],
-    ['Aggregated Income Tax Liability', -annualTax, 'Slab Evaluator Set: FY 2026-27'],
-    ['Net Residual Take-Home Pay', annualNetPay, ''],
-  ].filter(Boolean);
-
-  deductRows.forEach(([label, val, note]) => {
-    const tr = document.createElement('tr');
-    const isTotal = label.includes('Taxable Target') || label.includes('Take-Home');
-    const isBonus = label.includes('Income Events');
-    tr.innerHTML = `
-      <td style="${isTotal ? 'font-weight:700;' : ''}">${label}${note ? '<br><span style="font-size:12px;color:var(--slate-500);font-weight:500;">' + note + '</span>' : ''}</td>
-      <td style="text-align:right;${val < 0 ? 'color:var(--rose);' : isTotal ? 'color:var(--mint-dark);font-weight:700;' : isBonus ? 'color:var(--mint-dark);font-weight:600;' : ''}">
-        ${typeof val === 'number' ? (val < 0 ? '− PKR ' + Math.abs(val).toLocaleString('en-PK') : (isBonus ? '＋ PKR ' : 'PKR ') + Math.round(val).toLocaleString('en-PK')) : val}
-      </td>`;
-    dBody.appendChild(tr);
-  });
-
-  /* ── Monthly Ledger Table ── */
-  const mHead = document.getElementById('monthlyHead');
-  const mRows = document.getElementById('monthlyRows');
-  const mFoot = document.getElementById('monthlyFoot');
-  mHead.innerHTML = ''; mRows.innerHTML = ''; mFoot.innerHTML = '';
-
-  const cols = ['Period', 'Base Earnings'];
-  if (hasAdj) cols.push('One-Time Adj.');
-  if (medToggle) cols.push('Medical Ded.');
-  if (annualOtherDed > 0) cols.push('Other Adj.');
- cols.push('Taxable', 'Tax Withheld', 'Net Pay', 'On Account');
-
-  mHead.innerHTML = cols.map((c, i) => `<th style="${i > 0 ? 'text-align:right' : ''}">${c}</th>`).join('');
-
-let totGross=0, totAdj=0, totMed=0, totOther=0, totTaxable=0, totTax=0, totNet=0, totOnAccount=0;
-
-  MONTHS.forEach((mon, i) => {
-    const gross    = monthSalaries[i];
-    const adj      = monthAdjSign[i];
-    const med      = medToggle ? Math.round(gross * 0.10) : 0;
-    const other    = monthOtherDed[i];
-    const taxable  = monthTaxable[i];
-    const tax      = monthTaxes[i];
-    const incAdj   = Math.max(0, adj);
-    const net      = gross + incAdj - tax;
-    const onAccount = net - other;
-
-    totGross   += gross;
-    totAdj     += adj;
-    totMed     += med;
-    totOther   += other;
-    totTaxable += taxable;
-    totTax     += tax;
-    totNet     += net;
-    totOnAccount += onAccount;
-
-    const tr    = document.createElement('tr');
-    const isNew = mode === 'increment' && i > 0 && monthSalaries[i] !== monthSalaries[i-1];
-    if (isNew) tr.style.borderTop = '2px solid rgba(245,158,11,0.4)';
-
-    let cells = `<td style="font-weight:700;color:var(--slate-700)">${mon}${isNew ? ' <span style="font-size:10px;background:var(--amber);color:white;padding:3px 6px;border-radius:4px;margin-left:6px;font-weight:800;">▲ STEP</span>' : ''}</td>`;
-    cells += `<td style="text-align:right">${fmt(gross)}</td>`;
+  // Build rows
+  const rowsHtml = MONTHS.map((m, i) => {
+    let cells = `<td>${m}</td>`;
+    cells += `<td>${fmt(r.monthSalaries[i])}</td>`;
 
     if (hasAdj) {
-      if (adj > 0) {
-        cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">＋ ${fmt(adj)}</td>`;
-      } else if (adj < 0) {
-        cells += `<td style="text-align:right;color:var(--rose);font-weight:700">− ${fmt(Math.abs(adj))}</td>`;
+      const v = r.monthAdjSign[i];
+      if (v > 0) {
+        cells += `<td style="color:var(--mint-dark);font-weight:600;">＋ ${fmt(v)}</td>`;
+      } else if (v < 0) {
+        cells += `<td style="color:var(--rose);font-weight:600;">− ${fmt(Math.abs(v))}</td>`;
       } else {
-        cells += `<td style="text-align:right;color:var(--slate-400)">—</td>`;
+        cells += `<td style="color:var(--slate-400);">—</td>`;
+      }
+    }
+    if (medToggle) {
+      cells += `<td style="color:var(--rose);">− ${fmt(monthMed[i])}</td>`;
+    }
+    if (hasOther) {
+      const od = r.monthOtherDed[i];
+      cells += od > 0
+        ? `<td style="color:var(--rose);">− ${fmt(od)}</td>`
+        : `<td style="color:var(--slate-400);">—</td>`;
+    }
+
+    cells += `<td style="font-weight:600;">${fmt(r.monthTaxable[i])}</td>`;
+    cells += `<td style="color:var(--rose);">− ${fmt(r.monthTaxes[i])}</td>`;
+    cells += `<td style="color:var(--mint-dark);font-weight:700;">${fmt(monthNet[i])}</td>`;
+    cells += `<td style="color:var(--slate-900);font-weight:700;">${fmt(monthOnAcct[i])}</td>`;
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  // Build footer
+  let foot = `<td>Annual aggregate</td>`;
+  foot += `<td>${fmt(totGross)}</td>`;
+  if (hasAdj) {
+    const sign = totAdj >= 0 ? '＋' : '−';
+    foot += `<td style="color:${totAdj >= 0 ? '#6ee7b7' : '#fda4af'};">${sign} ${fmt(Math.abs(totAdj))}</td>`;
+  }
+  if (medToggle) {
+    foot += `<td style="color:#cbd5e1;">− ${fmt(totMed)}</td>`;
+  }
+  if (hasOther) {
+    foot += `<td style="color:#cbd5e1;">− ${fmt(totOther)}</td>`;
+  }
+  foot += `<td style="color:var(--mint);">${fmt(totTaxable)}</td>`;
+  foot += `<td style="color:#fda4af;">− ${fmt(totTax)}</td>`;
+  foot += `<td style="color:white;">${fmt(totNet)}</td>`;
+  foot += `<td style="color:white;">${fmt(totOnAcct)}</td>`;
+
+  return `
+    <div class="ledger-wrap">
+      <table class="ledger">
+        <thead><tr>${headerCells}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot><tr>${foot}</tr></tfoot>
+      </table>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RESULTS RENDERING
+   ════════════════════════════════════════════════════════════════ */
+function renderResults(r) {
+  if (!r) return;
+  const container = document.getElementById('resultsContainer');
+  if (!container) return;
+
+  const emp = state.employees.find(e => e.code === state.selectedCode);
+  const tr = emp.taxRecord;
+
+  let html = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">
+          <h3>Saved tax summary</h3>
+          <p>${TAX_YEAR}</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="results-grid">
+          <div class="result-tile primary">
+            <div class="tile-label">Annual tax liability</div>
+            <div class="tile-value">${fmtShort(tr.annualTax)}</div>
+            <div class="tile-sub">${fmt(tr.annualTax)}</div>
+          </div>
+          <div class="result-tile accent">
+            <div class="tile-label">Effective rate</div>
+            <div class="tile-value">${tr.effectiveRate.toFixed(2)}%</div>
+            <div class="tile-sub">on total income</div>
+          </div>
+          <div class="result-tile">
+            <div class="tile-label">Annual gross</div>
+            <div class="tile-value">${fmtShort(tr.annualGross)}</div>
+            <div class="tile-sub">${fmt(tr.annualGross)}</div>
+          </div>
+          <div class="result-tile">
+            <div class="tile-label">Annual taxable</div>
+            <div class="tile-value">${fmtShort(tr.annualTaxable)}</div>
+            <div class="tile-sub">${fmt(tr.annualTaxable)}</div>
+          </div>
+          <div class="result-tile">
+            <div class="tile-label">Net annual pay</div>
+            <div class="tile-value">${fmtShort(tr.annualNetPay)}</div>
+            <div class="tile-sub">${fmt(tr.annualNetPay)}</div>
+          </div>
+          <div class="result-tile">
+            <div class="tile-label">Avg monthly tax</div>
+            <div class="tile-value">${fmtShort(r.avgMonthlyTax)}</div>
+            <div class="tile-sub">${fmt(r.avgMonthlyTax)}</div>
+          </div>
+        </div>
+        ${renderMonthlyLedger(r, tr)}
+      </div>
+    </div>
+  `;
+  container.innerHTML = html;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EMPLOYEE CRUD
+   ════════════════════════════════════════════════════════════════ */
+function openAddEmployee() {
+  document.getElementById('newEmpName').value = '';
+  document.getElementById('newEmpCode').value = '';
+  openModal('addEmployeeModal');
+  setTimeout(() => document.getElementById('newEmpName').focus(), 100);
+}
+
+async function confirmAddEmployee() {
+  const name = document.getElementById('newEmpName').value.trim();
+  const code = document.getElementById('newEmpCode').value.trim().toUpperCase();
+
+  if (!name) { toast('Employee name is required.', 'error'); return; }
+  if (!code) { toast('Employee code is required.', 'error'); return; }
+  if (!/^[A-Z0-9\-_]+$/i.test(code)) {
+    toast('Code can only contain letters, digits, hyphens, and underscores.', 'error'); return;
+  }
+  if (state.employees.some(e => e.code.toUpperCase() === code.toUpperCase())) {
+    toast(`Code "${code}" is already taken.`, 'error'); return;
+  }
+
+  state.employees.push({ code, name, taxRecord: null });
+  state.selectedCode = code;
+  await saveState();
+  closeModal('addEmployeeModal');
+  renderRoster();
+  renderWorkspace();
+  toast(`${name} added to roster`, 'success');
+}
+
+function selectEmployee(code) {
+  state.selectedCode = code;
+  renderRoster();
+  renderWorkspace();
+}
+
+function openDeleteEmployee() {
+  pendingDeleteCode = state.selectedCode;
+  const emp = state.employees.find(e => e.code === pendingDeleteCode);
+  if (!emp) return;
+  document.getElementById('deleteDesc').textContent =
+    `This will permanently remove "${emp.name}" (${emp.code}) and the bound tax record.`;
+  openModal('deleteModal');
+}
+
+async function confirmDelete() {
+  const code = pendingDeleteCode;
+  if (!code) return;
+  state.employees = state.employees.filter(e => e.code !== code);
+  if (state.selectedCode === code) state.selectedCode = null;
+  pendingDeleteCode = null;
+  await saveState();
+  closeModal('deleteModal');
+  renderRoster();
+  renderWorkspace();
+  toast('Employee deleted', 'info');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CSV EXPORT — human-readable columns + base64 inputs blob
+   ════════════════════════════════════════════════════════════════ */
+const CSV_COLUMNS = [
+  'Employee Code', 'Employee Name', 'Tax Year',
+  'Annual Gross (PKR)', 'Annual Taxable (PKR)', 'Annual Tax (PKR)',
+  'Annual Net Pay (PKR)', 'Effective Rate (%)',
+  'Calculated At', 'InputsBlob (base64 JSON)',
+];
+
+function csvEscape(value) {
+  const s = String(value == null ? '' : value);
+  if (/[",\n\r]/.test(s)) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function exportCSV() {
+  if (state.employees.length === 0) {
+    toast('No employees to export.', 'error');
+    return;
+  }
+
+  const rows = [CSV_COLUMNS.map(csvEscape).join(',')];
+
+  state.employees.forEach(emp => {
+    const tr = emp.taxRecord;
+    let row;
+    if (tr) {
+      const inputsJson = JSON.stringify(tr.inputs || {});
+      const blob = b64encodeUtf8(inputsJson);
+      row = [
+        emp.code, emp.name, tr.taxYear,
+        tr.annualGross, tr.annualTaxable, tr.annualTax,
+        tr.annualNetPay, tr.effectiveRate,
+        tr.calculatedAt, blob,
+      ];
+    } else {
+      row = [emp.code, emp.name, '', '', '', '', '', '', '', ''];
+    }
+    rows.push(row.map(csvEscape).join(','));
+  });
+
+  const csv = '\uFEFF' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.download = `taxroster_${stamp}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  const computed = state.employees.filter(e => e.taxRecord).length;
+  toast(`Exported ${state.employees.length} employees · ${computed} with records`, 'success');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CSV PARSING — RFC 4180-aware
+   ════════════════════════════════════════════════════════════════ */
+function parseCSV(text) {
+  // Strip BOM if present
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  let i = 0;
+
+  while (i < text.length) {
+    const c = text[i];
+
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    }
+
+    if (c === '"') { inQuotes = true; i++; continue; }
+    if (c === ',') { row.push(field); field = ''; i++; continue; }
+    if (c === '\r') { i++; continue; }
+    if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; continue; }
+    field += c; i++;
+  }
+  // last field/row
+  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+  // remove trailing all-empty rows
+  while (rows.length > 0 && rows[rows.length - 1].every(c => c === '')) rows.pop();
+  return rows;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CSV IMPORT — fully restore state including bound calculations
+   ════════════════════════════════════════════════════════════════ */
+function openImportDialog() {
+  document.getElementById('importFileInput').value = '';
+  document.getElementById('importPreview').textContent = '';
+  document.getElementById('importConfirmBtn').disabled = true;
+  pendingImportData = null;
+  openModal('importModal');
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'importFileInput') {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const parsed = parseImportFile(ev.target.result);
+        pendingImportData = parsed.employees;
+        const withTax = parsed.employees.filter(e => e.taxRecord).length;
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--mint-dark);">✓</span> Parsed <strong>${parsed.employees.length}</strong> employees ` +
+          `(${withTax} with tax records). ` +
+          `<br><span style="color:var(--slate-500);">This will replace the current roster of ${state.employees.length}.</span>`;
+        document.getElementById('importConfirmBtn').disabled = false;
+      } catch (err) {
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--rose);">✗ ${escapeHtml(err.message)}</span>`;
+        document.getElementById('importConfirmBtn').disabled = true;
+      }
+    };
+    reader.readAsText(file, 'utf-8');
+  }
+});
+
+function parseImportFile(text) {
+  const rows = parseCSV(text);
+  if (rows.length < 1) throw new Error('CSV file is empty.');
+
+  const header = rows[0].map(h => h.trim());
+  const colIdx = {};
+  CSV_COLUMNS.forEach(name => { colIdx[name] = header.indexOf(name); });
+
+  if (colIdx['Employee Code'] === -1 || colIdx['Employee Name'] === -1) {
+    throw new Error('CSV missing required columns "Employee Code" or "Employee Name".');
+  }
+
+  const employees = [];
+  const seenCodes = new Set();
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (row.every(c => c === '')) continue;
+
+    const code = (row[colIdx['Employee Code']] || '').trim();
+    const name = (row[colIdx['Employee Name']] || '').trim();
+    if (!code || !name) continue;
+
+    if (seenCodes.has(code.toUpperCase())) {
+      throw new Error(`Duplicate employee code in CSV: ${code}`);
+    }
+    seenCodes.add(code.toUpperCase());
+
+    const emp = { code, name, taxRecord: null };
+
+    const blob = colIdx['InputsBlob (base64 JSON)'] !== -1
+                   ? (row[colIdx['InputsBlob (base64 JSON)']] || '').trim()
+                   : '';
+
+    if (blob) {
+      try {
+        const inputs = JSON.parse(b64decodeUtf8(blob));
+        // Recompute results from inputs to guarantee consistency
+        const results = runTaxCalculation(inputs);
+        emp.taxRecord = {
+          taxYear: (colIdx['Tax Year'] !== -1 ? row[colIdx['Tax Year']] : '') || TAX_YEAR,
+          annualGross:   results.annualGross,
+          annualTaxable: results.annualTaxable,
+          annualTax:     results.annualTax,
+          annualNetPay:  results.annualNetPay,
+          effectiveRate: parseFloat(results.effRate.toFixed(2)),
+          calculatedAt:  (colIdx['Calculated At'] !== -1 ? row[colIdx['Calculated At']] : nowISO()) || nowISO(),
+          inputs,
+          results: {
+            monthTaxes: results.monthTaxes,
+            monthTaxable: results.monthTaxable,
+            monthSalaries: results.monthSalaries,
+            monthAdjSign: results.monthAdjSign,
+            monthOtherDed: results.monthOtherDed,
+            annualIncAdj: results.annualIncAdj,
+            annualTotalIncome: results.annualTotalIncome,
+            avgMonthlyTax: results.avgMonthlyTax,
+          },
+        };
+      } catch (err) {
+        // Inputs blob corrupted — fall back to summary-only record so the row isn't lost
+        const annualTax = parseFloat(row[colIdx['Annual Tax (PKR)']]) || 0;
+        if (annualTax > 0) {
+          emp.taxRecord = {
+            taxYear: row[colIdx['Tax Year']] || TAX_YEAR,
+            annualGross:   parseFloat(row[colIdx['Annual Gross (PKR)']]) || 0,
+            annualTaxable: parseFloat(row[colIdx['Annual Taxable (PKR)']]) || 0,
+            annualTax,
+            annualNetPay:  parseFloat(row[colIdx['Annual Net Pay (PKR)']]) || 0,
+            effectiveRate: parseFloat(row[colIdx['Effective Rate (%)']]) || 0,
+            calculatedAt:  row[colIdx['Calculated At']] || nowISO(),
+            inputs: defaultInputs(),
+            results: null,
+          };
+        }
+      }
+    } else {
+      // No inputs blob — try to import summary-only
+      const annualTax = colIdx['Annual Tax (PKR)'] !== -1 ? parseFloat(row[colIdx['Annual Tax (PKR)']]) : NaN;
+      if (!isNaN(annualTax) && annualTax > 0) {
+        emp.taxRecord = {
+          taxYear: row[colIdx['Tax Year']] || TAX_YEAR,
+          annualGross:   parseFloat(row[colIdx['Annual Gross (PKR)']]) || 0,
+          annualTaxable: parseFloat(row[colIdx['Annual Taxable (PKR)']]) || 0,
+          annualTax,
+          annualNetPay:  parseFloat(row[colIdx['Annual Net Pay (PKR)']]) || 0,
+          effectiveRate: parseFloat(row[colIdx['Effective Rate (%)']]) || 0,
+          calculatedAt:  row[colIdx['Calculated At']] || nowISO(),
+          inputs: defaultInputs(),
+          results: null,
+        };
       }
     }
 
-    if (medToggle) cells += `<td style="text-align:right;color:var(--rose)">− ${fmt(med)}</td>`;
-    if (annualOtherDed > 0) cells += `<td style="text-align:right;color:var(--rose)">− ${fmt(other)}</td>`;
-
-    cells += `<td style="text-align:right;font-weight:600">${fmt(taxable)}</td>`;
-    cells += `<td style="text-align:right;color:var(--rose);font-weight:600">− ${fmt(tax)}</td>`;
-    cells += `<td style="text-align:right;color:var(--mint-dark);font-weight:700">${fmt(net)}</td>`;
-    cells += `<td style="text-align:right;color:var(--slate-900);font-weight:700">${fmt(onAccount)}</td>`;
-
-    tr.innerHTML = cells;
-    mRows.appendChild(tr);
-  });
-
-  /* ── Footer totals row ── */
-  const tfr = document.createElement('tr');
-  tfr.style.cssText = 'background:var(--slate-900);color:white;font-weight:600;';
-  let fcells = `<td style="font-size:12px;letter-spacing:.05em">ANNUAL AGGREGATE</td>`;
-  fcells += `<td style="text-align:right">${fmt(totGross)}</td>`;
-  if (hasAdj) {
-    const totAdjAbs = Math.abs(totAdj);
-    fcells += `<td style="text-align:right;color:${totAdj >= 0 ? '#6ee7b7' : '#fda4af'}">${totAdj >= 0 ? '＋' : '−'} ${fmt(totAdjAbs)}</td>`;
+    employees.push(emp);
   }
-  if (medToggle) fcells += `<td style="text-align:right;color:#cbd5e1">− ${fmt(totMed)}</td>`;
-  if (annualOtherDed > 0) fcells += `<td style="text-align:right;color:#cbd5e1">− ${fmt(totOther)}</td>`;
-  fcells += `<td style="text-align:right;color:var(--mint-ef)">${fmt(totTaxable)}</td>`;
-  fcells += `<td style="text-align:right;color:#fda4af">− ${fmt(totTax)}</td>`;
-  fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totNet)}</td>`;
-  fcells += `<td style="text-align:right;color:white;font-weight:800">${fmt(totOnAccount)}</td>`;
-  tfr.innerHTML = fcells;
-  mFoot.appendChild(tfr);
 
-  if (window.innerWidth < 968) {
-    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  if (employees.length === 0) throw new Error('No valid employee rows found.');
+  return { employees };
 }
 
-function exportLedger() {
-  const table = document.getElementById('monthlyTable');
-  let csv = [];
-  
-  const ths = table.querySelectorAll('thead th');
-  const headerRow = Array.from(ths).map(th => `"${th.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
-  csv.push(headerRow.join(','));
-  
-  const rows = table.querySelectorAll('tbody tr');
-  rows.forEach(row => {
-    const tds = row.querySelectorAll('td');
-    const rowData = Array.from(tds).map(td => `"${td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
-    csv.push(rowData.join(','));
-  });
-  
-  const footTds = table.querySelectorAll('tfoot td');
-  if (footTds.length > 0) {
-    const footData = Array.from(footTds).map(td => `"${td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`);
-    csv.push(footData.join(','));
-  }
-  
-  const csvContent = "\uFEFF" + csv.join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", "Pakistan_Salary_Tax_Ledger_FY2026-27.csv");
-  link.style.visibility = "hidden";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+async function confirmImport() {
+  if (!pendingImportData) return;
+  state.employees = pendingImportData;
+  state.selectedCode = null;
+  pendingImportData = null;
+  await saveState();
+  closeModal('importModal');
+  renderRoster();
+  renderWorkspace();
+  toast(`Roster restored · ${state.employees.length} employees`, 'success');
 }
 
-// Initial structural build out on view parsing
-initAdjustments();
+/* ════════════════════════════════════════════════════════════════
+   MODAL HELPERS
+   ════════════════════════════════════════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal on backdrop click
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-backdrop')) {
+    e.target.classList.remove('open');
+  }
+});
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   BOOTSTRAP
+   ════════════════════════════════════════════════════════════════ */
+(async function init() {
+  await loadState();
+  renderRoster();
+  renderWorkspace();
+})();
 </script>
 </body>
 </html>
-
-```
