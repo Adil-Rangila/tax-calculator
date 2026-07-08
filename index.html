@@ -815,6 +815,10 @@
       <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M7 11l5 5 5-5M12 3v13" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Export CSV
     </button>
+    <button class="btn btn-ghost-dark" onclick="openSummaryExportDialog()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M7 11l5 5 5-5M12 3v13" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Export Summary
+    </button>
     <button class="btn btn-primary" onclick="openAddEmployee()">
       <svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
       Add Employee
@@ -873,6 +877,26 @@
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('addEmployeeModal')">Cancel</button>
       <button class="btn btn-primary" onclick="confirmAddEmployee()">Create profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY EXPORT MODAL -->
+<div class="modal-backdrop" id="summaryExportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Export summary</h3>
+      <p>Choose which period to export (Code, Name, Taxable, Tax Withheld).</p>
+    </div>
+    <div class="modal-body">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--slate-600);margin-bottom:8px;">Period</label>
+      <select id="summaryExportMonth" style="width:100%;padding:10px 12px;border:1px solid var(--slate-200);border-radius:var(--radius-md);font-family:inherit;font-size:13px;background:var(--slate-50);cursor:pointer;">
+        <option value="year" selected>Full year (annual totals)</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('summaryExportModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmSummaryExport()">Export CSV</button>
     </div>
   </div>
 </div>
@@ -1742,6 +1766,76 @@ function exportCSV() {
 
   const computed = state.employees.filter(e => e.taxRecord).length;
   toast(`Exported ${state.employees.length} employees · ${computed} with records`, 'success');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SUMMARY CSV EXPORT — Code, Name, Taxable, Tax Withheld
+   (Full year or a specific month)
+   ════════════════════════════════════════════════════════════════ */
+function openSummaryExportDialog() {
+  if (state.employees.length === 0) {
+    toast('No employees to export.', 'error');
+    return;
+  }
+  const sel = document.getElementById('summaryExportMonth');
+  let opts = '<option value="year" selected>Full year (annual totals)</option>';
+  FULL_MONTHS.forEach((mon, idx) => {
+    opts += `<option value="${idx}">${mon}</option>`;
+  });
+  sel.innerHTML = opts;
+  openModal('summaryExportModal');
+}
+
+function confirmSummaryExport() {
+  const sel = document.getElementById('summaryExportMonth').value;
+  closeModal('summaryExportModal');
+  exportSummaryCSV(sel);
+}
+
+function exportSummaryCSV(period) {
+  if (state.employees.length === 0) {
+    toast('No employees to export.', 'error');
+    return;
+  }
+
+  const isYear = (period === 'year' || period === undefined);
+  const monthIdx = isYear ? -1 : parseInt(period, 10);
+  const periodLabel = isYear ? 'Annual' : FULL_MONTHS[monthIdx];
+
+  const columns = ['Employee Code', 'Employee Name',
+                   `Taxable (PKR) — ${periodLabel}`, `Tax Withheld (PKR) — ${periodLabel}`];
+  const rows = [columns.map(csvEscape).join(',')];
+
+  state.employees.forEach(emp => {
+    const tr = emp.taxRecord;
+    let taxable = '';
+    let tax = '';
+    if (tr) {
+      if (isYear) {
+        taxable = tr.annualTaxable;
+        tax = tr.annualTax;
+      } else if (tr.results && tr.results.monthTaxable && tr.results.monthTaxes) {
+        taxable = tr.results.monthTaxable[monthIdx];
+        tax = tr.results.monthTaxes[monthIdx];
+      }
+    }
+    rows.push([emp.code, emp.name, taxable, tax].map(csvEscape).join(','));
+  });
+
+  const csv = '\uFEFF' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = new Date().toISOString().slice(0, 10);
+  const suffix = isYear ? 'annual' : MONTHS[monthIdx].toLowerCase();
+  a.download = `tax_summary_${suffix}_${stamp}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  toast(`Exported ${periodLabel} summary for ${state.employees.length} employees`, 'success');
 }
 
 /* ════════════════════════════════════════════════════════════════
