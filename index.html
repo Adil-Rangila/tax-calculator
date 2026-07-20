@@ -1105,7 +1105,7 @@ function runTaxCalculation(inputs) {
   for (let i = 0; i < 12; i++) {
     const curTaxable = monthTaxable[i];
     let futureRegular = 0;
-    for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[j];
+    for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[i];
     const projAnnualTaxable = Math.max(0, ytdTaxable + curTaxable + futureRegular);
     const projAnnualTax     = computeTax(projAnnualTaxable);
     const remainingTax      = projAnnualTax - ytdTax;
