@@ -1062,17 +1062,30 @@ function computeTax(annualIncome) {
 
 function runTaxCalculation(inputs) {
   const { mode, grossSalary, oldSalary, newSalary, incrementMonth,
+          prevSalary, prevTax, joinerSalary, joinMonth,
           medToggle, otherDeductions, otherDedMonth, adjustments } = inputs;
+
+  // Fiscal-month index (0 = July … 11 = June) the new joiner started here
+  const joinFiscalIdx = joinMonth >= 7 ? joinMonth - 7 : joinMonth + 5;
 
   let monthSalaries = [];
   if (mode === 'fixed') {
     for (let i = 0; i < 12; i++) monthSalaries.push(grossSalary || 0);
+  } else if (mode === 'newjoiner') {
+    // No salary from this company before the join month; new salary thereafter
+    for (let i = 0; i < 12; i++) {
+      monthSalaries.push(i >= joinFiscalIdx ? (joinerSalary || 0) : 0);
+    }
   } else {
     const incFiscalIdx = incrementMonth >= 7 ? incrementMonth - 7 : incrementMonth + 5;
     for (let i = 0; i < 12; i++) {
       monthSalaries.push(i >= incFiscalIdx ? (newSalary || 0) : (oldSalary || 0));
     }
   }
+
+  // Prior-employer income/tax already booked this fiscal year (new joiners only)
+  const prevTaxable = (mode === 'newjoiner') ? (prevSalary || 0) : 0;
+  const prevPaidTax = (mode === 'newjoiner') ? (prevTax || 0) : 0;
 
   const otherDedFiscalIdx = otherDedMonth >= 7 ? otherDedMonth - 7 : otherDedMonth + 5;
   const otherDed = otherDeductions || 0;
@@ -1086,7 +1099,7 @@ function runTaxCalculation(inputs) {
   const monthRegularTaxable = monthSalaries.map((gross, i) => {
     let ded = 0;
     if (medToggle) ded += gross * 0.10;
-    const od = (i >= otherDedFiscalIdx) ? otherDed : 0;
+    const od = (i >= otherDedFiscalIdx && (mode !== 'newjoiner' || i >= joinFiscalIdx)) ? otherDed : 0;
     monthOtherDed.push(od);
     ded += od;
     return Math.max(0, gross - ded);
@@ -1094,16 +1107,21 @@ function runTaxCalculation(inputs) {
 
   const monthTaxable = monthRegularTaxable.map((reg, i) => Math.max(0, reg + monthAdjSign[i]));
 
-  const annualGross    = monthSalaries.reduce((a, b) => a + b, 0);
+  const annualGross    = monthSalaries.reduce((a, b) => a + b, 0) + prevTaxable;
   const annualIncAdj   = (adjustments || []).filter(a => a.isIncome).reduce((s, a) => s + a.amount, 0);
-  const annualTaxable  = monthTaxable.reduce((a, b) => a + b, 0);
+  const annualTaxable  = monthTaxable.reduce((a, b) => a + b, 0) + prevTaxable;
   const annualTotalIncome = annualGross + annualIncAdj;
 
   // Real-payroll projection
   const monthTaxes = [];
-  let ytdTax = 0, ytdTaxable = 0;
+  let ytdTax = prevPaidTax, ytdTaxable = prevTaxable;
   for (let i = 0; i < 12; i++) {
     const curTaxable = monthTaxable[i];
+    // New joiners: no withholding here before they joined
+    if (mode === 'newjoiner' && i < joinFiscalIdx) {
+      monthTaxes.push(0);
+      continue;
+    }
     let futureRegular = 0;
     for (let j = i + 1; j < 12; j++) futureRegular += monthRegularTaxable[i];
     const projAnnualTaxable = Math.max(0, ytdTaxable + curTaxable + futureRegular);
@@ -1120,11 +1138,16 @@ function runTaxCalculation(inputs) {
   const annualNetPay = annualTotalIncome - annualTax;
   const effRate      = annualTotalIncome > 0 ? (annualTax / annualTotalIncome * 100) : 0;
 
+  // For a new joiner the withholding here is spread over the months worked
+  const employedMonths = (mode === 'newjoiner') ? Math.max(1, 12 - joinFiscalIdx) : 12;
+  const newEmployerTax = annualTax - prevPaidTax;
+
   return {
     monthSalaries, monthAdjSign, monthOtherDed, monthTaxable, monthTaxes,
     annualGross, annualIncAdj, annualTaxable, annualTotalIncome,
     annualTax, annualNetPay, effRate,
-    avgMonthlyTax: annualTax / 12,
+    prevTaxable, prevPaidTax, newEmployerTax,
+    avgMonthlyTax: (mode === 'newjoiner') ? (newEmployerTax / employedMonths) : (annualTax / 12),
   };
 }
 
@@ -1266,6 +1289,10 @@ function defaultInputs() {
     oldSalary: '',
     newSalary: '',
     incrementMonth: 7,
+    prevSalary: '',
+    prevTax: '',
+    joinerSalary: '',
+    joinMonth: 7,
     medToggle: false,
     otherDeductions: '',
     otherDedMonth: 7,
@@ -1282,6 +1309,7 @@ function renderCalcForm(inputs) {
         <select id="salaryType" onchange="toggleSalaryMode()">
           <option value="fixed"${inputs.mode === 'fixed' ? ' selected' : ''}>Fixed monthly salary</option>
           <option value="increment"${inputs.mode === 'increment' ? ' selected' : ''}>Salary increment mid-year</option>
+          <option value="newjoiner"${inputs.mode === 'newjoiner' ? ' selected' : ''}>New joiner (taxed by prior employer)</option>
         </select>
       </div>
 
@@ -1308,6 +1336,31 @@ function renderCalcForm(inputs) {
           <select id="incrementMonth">
             ${monthOptions(inputs.incrementMonth || 7)}
           </select>
+        </div>
+      </div>
+
+      <div id="newjoinerMode" style="display:none;">
+        <div class="field-grid">
+          <div class="field">
+            <label for="prevSalary">Salary from previous employer this FY (PKR)</label>
+            <input type="number" id="prevSalary" placeholder="e.g. 900000" value="${inputs.prevSalary || ''}">
+          </div>
+          <div class="field">
+            <label for="prevTax">Tax already deducted by previous employer (PKR)</label>
+            <input type="number" id="prevTax" placeholder="e.g. 6000" value="${inputs.prevTax || ''}">
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="newJoinerSalary">New monthly salary (PKR)</label>
+            <input type="number" id="newJoinerSalary" placeholder="e.g. 300000" value="${inputs.joinerSalary || ''}">
+          </div>
+          <div class="field">
+            <label for="joinMonth">Joined this company in</label>
+            <select id="joinMonth">
+              ${monthOptions(inputs.joinMonth || 7)}
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -1392,6 +1445,7 @@ function toggleSalaryMode() {
   const mode = sel.value;
   document.getElementById('fixedMode').style.display = mode === 'fixed' ? 'block' : 'none';
   document.getElementById('incrementMode').style.display = mode === 'increment' ? 'block' : 'none';
+  document.getElementById('newjoinerMode').style.display = mode === 'newjoiner' ? 'block' : 'none';
 }
 
 function toggleOtherDedMonth() {
@@ -1429,6 +1483,10 @@ function readFormInputs() {
     oldSalary: parseFloat(document.getElementById('oldSalary').value) || 0,
     newSalary: parseFloat(document.getElementById('newSalary').value) || 0,
     incrementMonth: parseInt(document.getElementById('incrementMonth').value),
+    prevSalary: parseFloat(document.getElementById('prevSalary').value) || 0,
+    prevTax: parseFloat(document.getElementById('prevTax').value) || 0,
+    joinerSalary: parseFloat(document.getElementById('newJoinerSalary').value) || 0,
+    joinMonth: parseInt(document.getElementById('joinMonth').value),
     medToggle: document.getElementById('medToggle').checked,
     otherDeductions: parseFloat(document.getElementById('otherDeductions').value) || 0,
     otherDedMonth: parseInt(document.getElementById('otherDedMonth').value),
@@ -1456,6 +1514,9 @@ async function calculateAndSave() {
   }
   if (inputs.mode === 'increment' && (inputs.oldSalary <= 0 || inputs.newSalary <= 0)) {
     toast('Enter both old and new salary.', 'error'); return;
+  }
+  if (inputs.mode === 'newjoiner' && inputs.joinerSalary <= 0) {
+    toast('Enter the new monthly salary.', 'error'); return;
   }
 
   const results = runTaxCalculation(inputs);
@@ -1501,6 +1562,9 @@ function renderMonthlyLedger(r, tr) {
   const medToggle = !!inputs.medToggle;
   const hasAdj    = r.monthAdjSign.some(v => v !== 0);
   const hasOther  = r.monthOtherDed.some(v => v > 0);
+  const isNewJoiner = inputs.mode === 'newjoiner';
+  const prevTaxable = isNewJoiner ? (parseFloat(inputs.prevSalary) || 0) : 0;
+  const prevPaidTax = isNewJoiner ? (parseFloat(inputs.prevTax) || 0) : 0;
 
   // Per-month derived series
   const monthMed     = r.monthSalaries.map(g => medToggle ? Math.round(g * 0.10) : 0);
@@ -1508,14 +1572,14 @@ function renderMonthlyLedger(r, tr) {
   const monthOnAcct  = monthNet.map((n, i) => n - r.monthOtherDed[i]);
 
   // Annual totals
-  const totGross    = r.monthSalaries.reduce((a, b) => a + b, 0);
+  const totGross    = r.monthSalaries.reduce((a, b) => a + b, 0) + prevTaxable;
   const totAdj      = r.monthAdjSign.reduce((a, b) => a + b, 0);
   const totMed      = monthMed.reduce((a, b) => a + b, 0);
   const totOther    = r.monthOtherDed.reduce((a, b) => a + b, 0);
-  const totTaxable  = r.monthTaxable.reduce((a, b) => a + b, 0);
-  const totTax      = r.monthTaxes.reduce((a, b) => a + b, 0);
-  const totNet      = monthNet.reduce((a, b) => a + b, 0);
-  const totOnAcct   = monthOnAcct.reduce((a, b) => a + b, 0);
+  const totTaxable  = r.monthTaxable.reduce((a, b) => a + b, 0) + prevTaxable;
+  const totTax      = r.monthTaxes.reduce((a, b) => a + b, 0) + prevPaidTax;
+  const totNet      = monthNet.reduce((a, b) => a + b, 0) + (prevTaxable - prevPaidTax);
+  const totOnAcct   = monthOnAcct.reduce((a, b) => a + b, 0) + (prevTaxable - prevPaidTax);
 
   // Build header
   const headers = ['Period', 'Gross'];
@@ -1529,6 +1593,20 @@ function renderMonthlyLedger(r, tr) {
   ).join('');
 
   // Build rows
+  let priorRowHtml = '';
+  if (isNewJoiner) {
+    let pc = `<td>Prior employer</td>`;
+    pc += `<td>${fmt(prevTaxable)}</td>`;
+    if (hasAdj)    pc += `<td style="color:var(--slate-400);">—</td>`;
+    if (medToggle) pc += `<td style="color:var(--slate-400);">—</td>`;
+    if (hasOther)  pc += `<td style="color:var(--slate-400);">—</td>`;
+    pc += `<td style="font-weight:600;">${fmt(prevTaxable)}</td>`;
+    pc += `<td style="color:var(--rose);">− ${fmt(prevPaidTax)}</td>`;
+    pc += `<td style="color:var(--mint-dark);font-weight:700;">${fmt(prevTaxable - prevPaidTax)}</td>`;
+    pc += `<td style="color:var(--slate-900);font-weight:700;">${fmt(prevTaxable - prevPaidTax)}</td>`;
+    priorRowHtml = `<tr style="background:var(--slate-50);">${pc}</tr>`;
+  }
+
   const rowsHtml = MONTHS.map((m, i) => {
     let cells = `<td>${m}</td>`;
     cells += `<td>${fmt(r.monthSalaries[i])}</td>`;
@@ -1582,7 +1660,7 @@ function renderMonthlyLedger(r, tr) {
     <div class="ledger-wrap">
       <table class="ledger">
         <thead><tr>${headerCells}</tr></thead>
-        <tbody>${rowsHtml}</tbody>
+        <tbody>${priorRowHtml}${rowsHtml}</tbody>
         <tfoot><tr>${foot}</tr></tfoot>
       </table>
     </div>
@@ -1599,6 +1677,30 @@ function renderResults(r) {
 
   const emp = state.employees.find(e => e.code === state.selectedCode);
   const tr = emp.taxRecord;
+
+  const inp = tr.inputs || {};
+  let extraTiles = '';
+  if (inp.mode === 'newjoiner') {
+    const prevInc = parseFloat(inp.prevSalary) || 0;
+    const prevPaid = parseFloat(inp.prevTax) || 0;
+    const payableHere = Math.max(0, tr.annualTax - prevPaid);
+    extraTiles = `
+          <div class="result-tile">
+            <div class="tile-label">Prior employer income</div>
+            <div class="tile-value">${fmtShort(prevInc)}</div>
+            <div class="tile-sub">${fmt(prevInc)}</div>
+          </div>
+          <div class="result-tile">
+            <div class="tile-label">Tax already deducted</div>
+            <div class="tile-value">${fmtShort(prevPaid)}</div>
+            <div class="tile-sub">${fmt(prevPaid)}</div>
+          </div>
+          <div class="result-tile accent">
+            <div class="tile-label">Tax payable at this company</div>
+            <div class="tile-value">${fmtShort(payableHere)}</div>
+            <div class="tile-sub">${fmt(payableHere)}</div>
+          </div>`;
+  }
 
   let html = `
     <div class="card">
@@ -1640,6 +1742,7 @@ function renderResults(r) {
             <div class="tile-value">${fmtShort(r.avgMonthlyTax)}</div>
             <div class="tile-sub">${fmt(r.avgMonthlyTax)}</div>
           </div>
+          ${extraTiles}
         </div>
         ${renderMonthlyLedger(r, tr)}
       </div>
